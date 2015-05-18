@@ -4,6 +4,9 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, '',
 var player;
 var platforms;
 var ground;
+var jumpCount = 0;
+var cursors;
+var jumpButton;
 
 function preload() {
     game.load.image('ground', 'assets/platform.png');
@@ -28,11 +31,29 @@ function create() {
 
     // Enable physics to the player
     game.physics.arcade.enable(player);
-    player.body.gravity.y = 500;
+    player.body.gravity.y = 2000;
     player.body.collideWorldBounds = true;
+
+    //this.upKey = game.input.keyboard.addKey(Phaser.Keyboard.UP);
+    jumpButton = game.input.keyboard.addKey(Phaser.Keyboard.UP);
+    jumpButton.onDown.add(jump, this);
 }
 
 function update() {
+
     // Collide player with platforms (or the ground)
     game.physics.arcade.collide(player, platforms);
+
+    player.body.velocity.x = 0;
+
+    if (player.body.touching.down  && jumpCount > 0) {
+        jumpCount = 0;
+    }
+}
+
+function jump() {
+    if (jumpCount < 2) {
+        ++jumpCount;
+        player.body.velocity.y = -750;
+    }
 }
