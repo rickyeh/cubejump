@@ -2,6 +2,7 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, '',
     { preload: preload, create: create, update: update });
 
 var player;
+var floor;
 var platforms;
 var ground;
 var jumpCount = 0;
@@ -9,6 +10,7 @@ var cursors;
 var jumpButton;
 
 function preload() {
+    game.load.image('platform', 'assets/platform.png');
     game.load.image('ground', 'assets/platform.png');
     game.load.image('ninja', 'assets/ninja.png');
 }
@@ -18,11 +20,11 @@ function create() {
     game.stage.backgroundColor = '#87CEEB';
     game.physics.startSystem(Phaser.Physics.ARCADE);
 
-    platforms = game.add.group();
-    platforms.enableBody = true;
+    floor = game.add.group();
+    floor.enableBody = true;
 
     // Creates the ground
-    ground = platforms.create(0, game.world.height - 64, 'ground');
+    ground = floor.create(0, game.world.height - 64, 'ground');
     ground.scale.setTo(2,2);
     ground.body.immovable = true;
 
@@ -34,21 +36,38 @@ function create() {
     player.body.gravity.y = 2000;
     player.body.collideWorldBounds = true;
 
-    //this.upKey = game.input.keyboard.addKey(Phaser.Keyboard.UP);
+    // Add the jump button
     jumpButton = game.input.keyboard.addKey(Phaser.Keyboard.UP);
     jumpButton.onDown.add(jump, this);
+
+    // Create the platforms
+    platforms = this.add.physicsGroup();
+
+    platforms.create(400, 400, 'platform');
+    platforms.create(600, 300, 'platform');
+    platforms.create(900, 200, 'platform');
+    platforms.create(1200, 100, 'platform');
+
+    platforms.setAll('body.allowGravity', false);
+    platforms.setAll('body.immovable', true);
+    platforms.setAll('body.velocity.x', -150);
 }
 
 function update() {
 
-    // Collide player with platforms (or the ground)
-    game.physics.arcade.collide(player, platforms);
+    // Collide player with floor (or the ground)
+    game.physics.arcade.collide(player, floor);
+    game.physics.arcade.collide(player, platforms, setFriction);
 
     player.body.velocity.x = 0;
 
     if (player.body.touching.down  && jumpCount > 0) {
         jumpCount = 0;
     }
+}
+
+function setFriction(player, platform) {
+    player.body.x -= platform.body.x - platform.body.prev.x;
 }
 
 function jump() {
