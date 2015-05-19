@@ -29,7 +29,7 @@ function create() {
     ground.body.immovable = true;
 
     // Add the player to the game
-    player = game.add.sprite(32, game.world.height - 150, 'ninja');
+    player = game.add.sprite(75, game.world.height - 150, 'ninja');
 
     // Enable physics to the player
     game.physics.arcade.enable(player);
@@ -47,27 +47,28 @@ function create() {
     platforms.create(600, 300, 'platform');
     platforms.create(900, 200, 'platform');
     platforms.create(1200, 100, 'platform');
+    platforms.create(2000, 400, 'platform');
+    platforms.create(2400, 300, 'platform');
+    platforms.create(2600, 200, 'platform');
+    platforms.create(3000, 100, 'platform');
 
     platforms.setAll('body.allowGravity', false);
     platforms.setAll('body.immovable', true);
-    platforms.setAll('body.velocity.x', -150);
+    platforms.setAll('body.velocity.x', -300);
+    platforms.setAll('body.friction.x', 0);
 }
 
 function update() {
 
     // Collide player with floor (or the ground)
     game.physics.arcade.collide(player, floor);
-    game.physics.arcade.collide(player, platforms, setFriction);
+    game.physics.arcade.collide(player, platforms);
 
     player.body.velocity.x = 0;
 
     if (player.body.touching.down  && jumpCount > 0) {
         jumpCount = 0;
     }
-}
-
-function setFriction(player, platform) {
-    player.body.x -= platform.body.x - platform.body.prev.x;
 }
 
 function jump() {
