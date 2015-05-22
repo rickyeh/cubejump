@@ -1,22 +1,21 @@
 var X_GAMESPEED = -400;
 
-var main = function(game) {
+var Main = function(game) {
     console.log('main state called');
 
-    var player;
-    var floor;
-    var platforms;
-    var spikes;
-    var ground;
-    var jumpCount;
-    var cursors;
-    var jumpButton;
+    // this.player;
+    // this.floor;
+    // this.platforms;
+    // this.spikes;
+    // this.ground;
+    // this.cursors;
+    // this.jumpButton;
+    this.jumpCount = 0;
 };
 
-main.prototype = {
+Main.prototype = {
 
     create: function() {
-        this.jumpCount = 0;
 
         // Set background color, start physics engine
         this.game.stage.backgroundColor = '#87CEEB';
@@ -53,12 +52,14 @@ main.prototype = {
 
     update: function() {
 
+        this.player.body.velocity.x = 0;
+
         // Collide player with floor (or the ground)
         this.game.physics.arcade.collide(this.player, this.floor);
         this.game.physics.arcade.collide(this.player, this.platforms);
-        this.game.physics.arcade.collide(this.player, this.spikes);
 
-        this.player.body.velocity.x = 0;
+        // Collide player with spikes, and call die function
+        this.game.physics.arcade.collide(this.player, this.spikes, this.die, null, this);
 
         if (this.player.body.touching.down  && this.jumpCount > 0) {
             this.jumpCount = 0;
@@ -70,6 +71,15 @@ main.prototype = {
             ++this.jumpCount;
             this.player.body.velocity.y = -1000;
         }
+    },
+
+    die: function() {
+        console.log('Player has died');
+        this.resetGame();
+    },
+
+    resetGame: function() {
+        this.game.state.start("Main");
     },
 
     createRandomPlatforms: function(numOfPlatforms) {
@@ -95,7 +105,7 @@ main.prototype = {
 
     createRandomSpikes: function(numOfSpikes) {
         var x = 600;
-        var y = 505;
+        var y = 504;
         var spikeCount = 0;
         var gap = 0;
 

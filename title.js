@@ -1,9 +1,9 @@
-var title = function(game){
+var Title = function(game){
     console.log('title state called');
-}
+};
 
-title.prototype = {
+Title.prototype = {
     create: function() {
-        this.game.state.start("Main");
+        this.game.state.start('Main');
     }
-}
+};

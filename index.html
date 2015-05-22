@@ -8,21 +8,10 @@
         <script type="text/javascript" src="preload.js"></script>
         <script type="text/javascript" src="title.js"></script>
         <script type="text/javascript" src="main.js"></script>
-        <link rel="stylesheet" type="text/css" href"styles.css">
-
-        <script>
-            (function() {
-                var game = new Phaser.Game(800, 600, Phaser.AUTO, "", {
-                    // create: create,
-                    // update: update
-                });
-                game.state.add("Preload", preload);
-                game.state.add("Title", title);
-                game.state.add("Main", main)
-                game.state.start("Preload");
-            })();
-        </script>
+        <script type="text/javascript" src="app.js"></script>
+        <link rel="stylesheet" type="text/css" href="styles.css">
     </head>
     <body>
+        <div id="gameScreen"></div>
     </body>
 </html>
