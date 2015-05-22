@@ -65,6 +65,13 @@ Main.prototype = {
         if (this.player.body.touching.down  && this.jumpCount > 0) {
             this.jumpCount = 0;
         }
+
+        // If player gets pushed back, slowly move cube back to starting position.
+        if (this.player.x < 0) {
+            this.die();
+        } else if (this.player.x < 75) {
+            this.player.body.velocity.x = 10;
+        }
     },
 
     jump: function() {
