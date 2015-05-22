@@ -71,6 +71,10 @@ Main.prototype = {
             ++this.jumpCount;
             this.player.body.velocity.y = -1000;
         }
+        //this.player.body.sprite.angle = 45;
+        if (this.jumpCount === 2) {
+            this.game.add.tween(this.player).to( { angle: 360 }, 500, Phaser.Easing.Linear.None, true);
+        }
     },
 
     die: function() {
@@ -79,16 +83,16 @@ Main.prototype = {
     },
 
     resetGame: function() {
-        this.game.state.start("Main");
+        this.game.state.start('Main');
     },
 
     createRandomPlatforms: function(numOfPlatforms) {
-        console.log(platformCount);
-        // platforms.create(400, 400, 'platform');
 
         var gap = 500;
-        var x = 0;
+        var x = 500;
         var platformCount = 0;
+
+        this.platforms.create(450, 350, 'platform');
 
         while (platformCount < numOfPlatforms) {
             this.platforms.create( x + gap, this.game.rnd.integerInRange(100,400), 'platform');
