@@ -31,6 +31,7 @@ Main.prototype = {
 
         // Add the player to the game
         this.player = this.game.add.sprite(75, this.game.world.height - 150, 'ninja');
+        this.player.anchor.setTo(0.4);
 
         // Enable physics to the player
         this.game.physics.arcade.enable(this.player);
@@ -73,7 +74,7 @@ Main.prototype = {
         }
         //this.player.body.sprite.angle = 45;
         if (this.jumpCount === 2) {
-            this.game.add.tween(this.player).to( { angle: 360 }, 500, Phaser.Easing.Linear.None, true);
+            this.game.add.tween(this.player).to( { angle: 360 }, 400, Phaser.Easing.Linear.None, true);
         }
     },
 
