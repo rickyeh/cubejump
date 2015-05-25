@@ -42,6 +42,9 @@ Main.prototype = {
         this.jumpButton = this.game.input.keyboard.addKey(Phaser.Keyboard.UP);
         this.jumpButton.onDown.add(this.jump, this);
 
+        // Added mouse / touch functionality for jumping
+        this.input.onDown.add(this.jump, this);
+
         // Initialize Physics for obstacles
         this.platforms = this.add.physicsGroup();
         this.spikes = this.add.physicsGroup();
@@ -69,7 +72,7 @@ Main.prototype = {
         // If player gets pushed back, slowly move cube back to starting position.
         if (this.player.x < 0) {
             this.die();
-        } else if (this.player.x < 75) {
+        } else if (this.player.x < 75  && this.player.body.velocity.x === 0) {
             this.player.body.velocity.x = 10;
         }
     },
