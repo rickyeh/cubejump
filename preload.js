@@ -9,6 +9,7 @@ Preload.prototype = {
         this.game.load.image('ground', 'assets/platform.png');
         this.game.load.image('ninja', 'assets/ninja.png');
         this.game.load.image('spike', 'assets/spike.png');
+        this.game.load.image('grass', 'assets/grass.png');
     },
     create: function(){
         this.game.state.start('Title');

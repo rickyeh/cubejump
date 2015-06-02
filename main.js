@@ -25,8 +25,8 @@ Main.prototype = {
         this.floor.enableBody = true;
 
         // Creates the ground
-        this.ground = this.floor.create(0, this.game.world.height - 64, 'ground');
-        this.ground.scale.setTo(2,2);
+        this.ground = this.floor.create(0, this.game.world.height-112, 'grass');
+        //this.ground.scale.setTo(0,0);
         this.ground.body.immovable = true;
 
         // Add the player to the game
@@ -103,13 +103,13 @@ Main.prototype = {
         var x = 500;
         var platformCount = 0;
 
-        this.platforms.create(450, 350, 'platform');
+        this.platforms.create(450, 450, 'platform');
 
         while (platformCount < numOfPlatforms) {
-            this.platforms.create( x + gap, this.game.rnd.integerInRange(100,400), 'platform');
+            this.platforms.create( x + gap, this.game.rnd.integerInRange(200,450), 'platform');
             platformCount++;
             x +=  gap;
-            gap = this.game.rnd.integerInRange(450, 700);
+            gap = this.game.rnd.integerInRange(450, 800);
         }
 
         this.platforms.setAll('body.allowGravity', false);
@@ -120,7 +120,7 @@ Main.prototype = {
 
     createRandomSpikes: function(numOfSpikes) {
         var x = 600;
-        var y = 504;
+        var y = 606;
         var spikeCount = 0;
         var gap = 0;
 
