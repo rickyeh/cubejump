@@ -21,14 +21,6 @@ Main.prototype = {
         this.game.stage.backgroundColor = '#87CEEB';
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
-        this.floor = this.game.add.group();
-        this.floor.enableBody = true;
-
-        // Creates the ground
-        this.ground = this.floor.create(0, this.game.world.height-112, 'grass');
-        //this.ground.scale.setTo(0,0);
-        this.ground.body.immovable = true;
-
         // Add the player to the game
         this.player = this.game.add.sprite(75, this.game.world.height - 150, 'ninja');
         this.player.anchor.setTo(0.4);
@@ -49,7 +41,8 @@ Main.prototype = {
         this.platforms = this.add.physicsGroup();
         this.spikes = this.add.physicsGroup();
 
-        // Create the platforms
+        // Create the world objects
+        this.createRandomGround();
         this.createRandomPlatforms(20);
         this.createRandomSpikes(40);
     },
@@ -95,6 +88,29 @@ Main.prototype = {
 
     resetGame: function() {
         this.game.state.start('Main');
+    },
+
+    createRandomGround: function() {
+        var x = 0;
+        var gap = 0;
+        var groundCount = 10;
+
+        this.floor = this.game.add.group();
+        this.floor.enableBody = true;
+
+        // Creates the ground
+        for ( var i = 0; i < groundCount; i++) {
+            this.floor.create(x + gap, this.game.world.height-112, 'grass');
+            x += 1328 + gap;
+            gap = this.game.rnd.integerInRange(100, 350);
+        }
+        
+
+
+        this.floor.setAll('body.allowGravity', false);
+        this.floor.setAll('body.immovable', true);
+        this.floor.setAll('body.velocity.x', X_GAMESPEED);
+        this.floor.setAll('body.friction.x', 0);
     },
 
     createRandomPlatforms: function(numOfPlatforms) {
