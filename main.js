@@ -105,8 +105,6 @@ Main.prototype = {
             gap = this.game.rnd.integerInRange(100, 350);
         }
         
-
-
         this.floor.setAll('body.allowGravity', false);
         this.floor.setAll('body.immovable', true);
         this.floor.setAll('body.velocity.x', X_GAMESPEED);
