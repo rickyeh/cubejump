@@ -3,13 +3,6 @@ var X_GAMESPEED = -400;
 var Main = function(game) {
     console.log('main state called');
 
-    // this.player;
-    // this.floor;
-    // this.platforms;
-    // this.spikes;
-    // this.ground;
-    // this.cursors;
-    // this.jumpButton;
     this.jumpCount = 0;
 };
 
@@ -18,7 +11,7 @@ Main.prototype = {
     create: function() {
 
         // Set background color, start physics engine
-        this.game.stage.backgroundColor = '#87CEEB';
+        
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
         // Add the player to the game
@@ -40,11 +33,13 @@ Main.prototype = {
         // Initialize Physics for obstacles
         this.platforms = this.add.physicsGroup();
         this.spikes = this.add.physicsGroup();
+        //this.game.physics.arcade.enable(this.spikes);
 
         // Create the world objects
         this.createRandomGround();
         this.createRandomPlatforms(20);
         this.createRandomSpikes(40);
+
     },
 
     update: function() {
@@ -54,6 +49,8 @@ Main.prototype = {
         // Collide player with floor (or the ground)
         this.game.physics.arcade.collide(this.player, this.floor);
         this.game.physics.arcade.collide(this.player, this.platforms);
+
+        this.game.physics.arcade.collide(this.spikes, this.floor);
 
         // Collide player with spikes, and call die function
         this.game.physics.arcade.collide(this.player, this.spikes, this.die, null, this);
@@ -75,7 +72,6 @@ Main.prototype = {
             ++this.jumpCount;
             this.player.body.velocity.y = -1000;
         }
-        //this.player.body.sprite.angle = 45;
         if (this.jumpCount === 2) {
             this.game.add.tween(this.player).to( { angle: 360 }, 400, Phaser.Easing.Linear.None, true);
         }
@@ -134,7 +130,7 @@ Main.prototype = {
 
     createRandomSpikes: function(numOfSpikes) {
         var x = 600;
-        var y = 606;
+        var y = 605;
         var spikeCount = 0;
         var gap = 0;
 
@@ -146,8 +142,8 @@ Main.prototype = {
         }
 
         this.spikes.setAll('body.allowGravity', true);
-        this.spikes.setAll('body.immovable', true);
+        this.spikes.setAll('body.immovable', false);
         this.spikes.setAll('body.velocity.x', X_GAMESPEED);
-        this.spikes.setAll('body.friction.x', 0);
+        this.spikes.setAll('body.gravity.y', 4000);
     }
 };
