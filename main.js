@@ -21,7 +21,7 @@ Main.prototype = {
         // Enable physics to the player
         this.game.physics.arcade.enable(this.player);
         this.player.body.gravity.y = 4000;
-        this.player.body.collideWorldBounds = true;
+        this.player.body.collideWorldBounds = false;
 
         // Add the jump button
         this.jumpButton = this.game.input.keyboard.addKey(Phaser.Keyboard.UP);
@@ -64,6 +64,8 @@ Main.prototype = {
             this.die();
         } else if (this.player.x < 75  && this.player.body.velocity.x === 0) {
             this.player.body.velocity.x = 10;
+        } else if (this.player.y > this.game.world.height + 500) {
+            this.die();
         }
     },
 
