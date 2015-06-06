@@ -4,6 +4,8 @@ var Main = function(game) {
     console.log('main state called');
 
     this.jumpCount = 0;
+    this.score = 0;
+    this.scoreText = '';
 };
 
 Main.prototype = {
@@ -33,12 +35,17 @@ Main.prototype = {
         // Initialize Physics for obstacles
         this.platforms = this.add.physicsGroup();
         this.spikes = this.add.physicsGroup();
-        //this.game.physics.arcade.enable(this.spikes);
+
+        this.coins = this.game.add.group();
+        this.coins.enableBody = true;
 
         // Create the world objects
         this.createRandomGround();
         this.createRandomPlatforms(20);
         this.createRandomSpikes(40);
+        this.createRandomCoins(30);
+
+        this.scoreText = this.game.add.text(1165, 16, 'Score: 0' , { fontSize: '32px', fill: '#000'});
 
     },
 
@@ -64,9 +71,15 @@ Main.prototype = {
             this.die();
         } else if (this.player.x < 75  && this.player.body.velocity.x === 0) {
             this.player.body.velocity.x = 10;
-        } else if (this.player.y > this.game.world.height + 500) {
+        } else if (this.player.y > this.game.world.height + 1000) {
             this.die();
         }
+
+        // Collision for coins
+        this.game.physics.arcade.collide(this.coins, this.platforms);
+        this.game.physics.arcade.collide(this.coins, this.floor);
+        this.game.physics.arcade.overlap(this.player, this.coins, this.collectCoin, null, this);
+
     },
 
     jump: function() {
@@ -85,6 +98,7 @@ Main.prototype = {
     },
 
     resetGame: function() {
+        this.score = 0;
         this.game.state.start('Main');
     },
 
@@ -147,5 +161,29 @@ Main.prototype = {
         this.spikes.setAll('body.immovable', false);
         this.spikes.setAll('body.velocity.x', X_GAMESPEED);
         this.spikes.setAll('body.gravity.y', 4000);
+    },
+
+    createRandomCoins: function(numOfCoins) {
+        var x = 500;
+        var y = 100;
+        var gap = 0;
+
+        // Create 12 stars efvenly spaced apart
+        for (var i = 0; i < numOfCoins; i++) {
+            //Create a star inside of the 'stars' group
+            var coin = this.coins.create(x + gap, y, 'coin');
+
+            x += gap;
+            gap = this.game.rnd.integerInRange(200,500);
+        }
+        this.coins.setAll('body.gravity.y', 4000);
+        this.coins.setAll('body.velocity.x', X_GAMESPEED);
+    },
+    collectCoin: function (player, coin) {
+        coin.kill();
+
+        // Add and update the score
+        this.score += 1;
+        this.scoreText.text = 'Score: ' + this.score;
     }
 };

@@ -8,7 +8,8 @@ Preload.prototype = {
         this.game.load.image('platform', 'assets/platform.png');
         this.game.load.image('ground', 'assets/platform.png');
         this.game.load.image('ninja', 'assets/ninja.png');
-        this.game.load.image('spike', 'assets/spike.png');
+        this.game.load.image('spike', 'assets/spikeO.png');
+        this.game.load.image('coin', 'assets/coin.png');
         this.game.load.image('grass', 'assets/grass.png');
         this.game.load.image('title', 'assets/title.png');
         this.game.load.image('startButton', 'assets/startButton.png');
