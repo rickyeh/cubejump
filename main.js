@@ -40,13 +40,18 @@ Main.prototype = {
         this.coins.enableBody = true;
 
         // Create the world objects
-        this.createRandomGround();
-        this.createRandomPlatforms(20);
-        this.createRandomSpikes(40);
-        this.createRandomCoins(30);
+        this.createRandomGround(15);
+        this.createRandomPlatforms(40);
+        this.createRandomSpikes(80);
+        this.createRandomCoins(70);
 
+        // Initialize Scoreboard
         this.scoreText = this.game.add.text(1165, 16, 'Score: 0' , { fontSize: '32px', fill: '#000'});
 
+        // Iniitialize audio
+        this.coinSound = this.game.add.audio('coin');
+        this.deathSound = this.game.add.audio('death');
+        this.jumpSound = this.game.add.audio('jump');
     },
 
     update: function() {
@@ -86,6 +91,7 @@ Main.prototype = {
         if (this.jumpCount < 2) {
             ++this.jumpCount;
             this.player.body.velocity.y = -1000;
+            this.jumpSound.play();
         }
         if (this.jumpCount === 2) {
             this.game.add.tween(this.player).to( { angle: 360 }, 400, Phaser.Easing.Linear.None, true);
@@ -94,6 +100,7 @@ Main.prototype = {
 
     die: function() {
         console.log('Player has died');
+        this.deathSound.play();
         this.resetGame();
     },
 
@@ -102,16 +109,15 @@ Main.prototype = {
         this.game.state.start('Main');
     },
 
-    createRandomGround: function() {
+    createRandomGround: function(numOfGround) {
         var x = 0;
         var gap = 0;
-        var groundCount = 10;
 
         this.floor = this.game.add.group();
         this.floor.enableBody = true;
 
         // Creates the ground
-        for ( var i = 0; i < groundCount; i++) {
+        for ( var i = 0; i < numOfGround; i++) {
             this.floor.create(x + gap, this.game.world.height-112, 'grass');
             x += 1328 + gap;
             gap = this.game.rnd.integerInRange(100, 350);
@@ -181,6 +187,7 @@ Main.prototype = {
     },
     collectCoin: function (player, coin) {
         coin.kill();
+        this.coinSound.play();
 
         // Add and update the score
         this.score += 1;
