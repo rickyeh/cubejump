@@ -11,9 +11,7 @@ var Main = function(game) {
 Main.prototype = {
 
     create: function() {
-
         // Set background color, start physics engine
-        
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
         // Add the player to the game
@@ -39,12 +37,6 @@ Main.prototype = {
         this.coins = this.game.add.group();
         this.coins.enableBody = true;
 
-        // Create the world objects
-        this.createRandomGround(15);
-        this.createRandomPlatforms(40);
-        this.createRandomSpikes(80);
-        this.createRandomCoins(70);
-
         // Initialize Scoreboard
         this.scoreText = this.game.add.text(1165, 16, 'Score: 0' , { fontSize: '32px', fill: '#000'});
 
@@ -52,6 +44,19 @@ Main.prototype = {
         this.coinSound = this.game.add.audio('coin');
         this.deathSound = this.game.add.audio('death');
         this.jumpSound = this.game.add.audio('jump');
+        
+        // Create the world objects depending on stage selected
+        switch(stageSelect) {
+            case 0:
+                this.startEndless();
+                break;
+            case 1:
+                this.startLevel1();
+                break;
+            default:
+                this.startEndless();
+                break;
+        }
     },
 
     update: function() {
@@ -88,10 +93,12 @@ Main.prototype = {
     },
 
     jump: function() {
+        if(this.jumpCount === 0) {
+            this.jumpSound.play();  // play sound on first jump
+        }
         if (this.jumpCount < 2) {
             ++this.jumpCount;
             this.player.body.velocity.y = -1000;
-            this.jumpSound.play();
         }
         if (this.jumpCount === 2) {
             this.game.add.tween(this.player).to( { angle: 360 }, 400, Phaser.Easing.Linear.None, true);
@@ -192,5 +199,14 @@ Main.prototype = {
         // Add and update the score
         this.score += 1;
         this.scoreText.text = 'Score: ' + this.score;
+    },
+    startEndless: function() {
+        this.createRandomGround(20);
+        this.createRandomPlatforms(40);
+        this.createRandomSpikes(80);
+        this.createRandomCoins(70);
+    },
+    startLevel1: function() {
+
     }
 };

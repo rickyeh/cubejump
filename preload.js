@@ -12,7 +12,7 @@ Preload.prototype = {
         this.game.load.image('coin', 'assets/coin.png');
         this.game.load.image('grass', 'assets/grass.png');
         this.game.load.image('title', 'assets/title.png');
-        this.game.load.image('startButton', 'assets/startButton.png');
+        this.game.load.image('playButton', 'assets/playButton.png');
 
         this.load.audio('jump', 'assets/jump.wav');
         this.load.audio('coin', 'assets/coin.wav');
