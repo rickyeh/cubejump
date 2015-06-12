@@ -34,6 +34,10 @@ Main.prototype = {
         this.platforms = this.add.physicsGroup();
         this.spikes = this.add.physicsGroup();
 
+        // Initialize floor
+        this.floor = this.game.add.group();
+        this.floor.enableBody = true;
+
         this.coins = this.game.add.group();
         this.coins.enableBody = true;
 
@@ -44,7 +48,7 @@ Main.prototype = {
         this.coinSound = this.game.add.audio('coin');
         this.deathSound = this.game.add.audio('death');
         this.jumpSound = this.game.add.audio('jump');
-        
+
         // Create the world objects depending on stage selected
         switch(stageSelect) {
             case 0:
@@ -57,6 +61,19 @@ Main.prototype = {
                 this.startEndless();
                 break;
         }
+
+        this.platforms.setAll('body.allowGravity', false);
+        this.platforms.setAll('body.immovable', true);
+        this.platforms.setAll('body.velocity.x', X_GAMESPEED);
+        this.platforms.setAll('body.friction.x', 0);
+        this.floor.setAll('body.allowGravity', false);
+        this.floor.setAll('body.immovable', true);
+        this.floor.setAll('body.velocity.x', X_GAMESPEED);
+        this.floor.setAll('body.friction.x', 0);
+        this.spikes.setAll('body.allowGravity', true);
+        this.spikes.setAll('body.immovable', false);
+        this.spikes.setAll('body.velocity.x', X_GAMESPEED);
+        this.spikes.setAll('body.gravity.y', 4000);
     },
 
     update: function() {
@@ -120,24 +137,15 @@ Main.prototype = {
         var x = 0;
         var gap = 0;
 
-        this.floor = this.game.add.group();
-        this.floor.enableBody = true;
-
         // Creates the ground
         for ( var i = 0; i < numOfGround; i++) {
             this.floor.create(x + gap, this.game.world.height-112, 'grass');
             x += 1328 + gap;
             gap = this.game.rnd.integerInRange(100, 350);
         }
-        
-        this.floor.setAll('body.allowGravity', false);
-        this.floor.setAll('body.immovable', true);
-        this.floor.setAll('body.velocity.x', X_GAMESPEED);
-        this.floor.setAll('body.friction.x', 0);
     },
 
     createRandomPlatforms: function(numOfPlatforms) {
-
         var gap = 500;
         var x = 500;
         var platformCount = 0;
@@ -151,10 +159,7 @@ Main.prototype = {
             gap = this.game.rnd.integerInRange(450, 800);
         }
 
-        this.platforms.setAll('body.allowGravity', false);
-        this.platforms.setAll('body.immovable', true);
-        this.platforms.setAll('body.velocity.x', X_GAMESPEED);
-        this.platforms.setAll('body.friction.x', 0);
+
     },
 
     createRandomSpikes: function(numOfSpikes) {
@@ -169,11 +174,6 @@ Main.prototype = {
             gap = this.game.rnd.integerInRange(100,600);
             spikeCount++;
         }
-
-        this.spikes.setAll('body.allowGravity', true);
-        this.spikes.setAll('body.immovable', false);
-        this.spikes.setAll('body.velocity.x', X_GAMESPEED);
-        this.spikes.setAll('body.gravity.y', 4000);
     },
 
     createRandomCoins: function(numOfCoins) {
@@ -207,6 +207,23 @@ Main.prototype = {
         this.createRandomCoins(70);
     },
     startLevel1: function() {
+        this.createFloor(0, 20);
+        this.createBrick(1000, 500, 2);
+        this.createBrick(1400, 500, 2);
+        this.createBrick(1800, 500, 2);
+        this.createBrick(2200, 500, 2);
+    },
+    createBrick: function(x, y, length) {
+        if(length == undefined) {
+            length = 1;
+        }
+        this.platforms.create(x, y, 'brick').scale.setTo(length, 1);
+    },
+    createFloor: function(x, length) {
 
+        for(var i = 0; i < length; i++) {
+            this.floor.create(x, this.game.world.height-112, 'grass');
+            x += 1300;
+        }
     }
 };
