@@ -74,6 +74,7 @@ Main.prototype = {
         this.spikes.setAll('body.immovable', false);
         this.spikes.setAll('body.velocity.x', X_GAMESPEED);
         this.spikes.setAll('body.gravity.y', 4000);
+        this.coins.setAll('body.velocity.x', X_GAMESPEED);
     },
 
     update: function() {
@@ -190,7 +191,6 @@ Main.prototype = {
             gap = this.game.rnd.integerInRange(200,500);
         }
         this.coins.setAll('body.gravity.y', 4000);
-        this.coins.setAll('body.velocity.x', X_GAMESPEED);
     },
     collectCoin: function (player, coin) {
         coin.kill();
@@ -212,18 +212,42 @@ Main.prototype = {
         this.createBrick(1400, 500, 2);
         this.createBrick(1800, 500, 2);
         this.createBrick(2200, 500, 2);
+        this.createCoin(500, 600, 3);
+        this.createSpike(900, 600, 30);
     },
     createBrick: function(x, y, length) {
-        if(length == undefined) {
+        if(length === undefined) {
             length = 1;
         }
         this.platforms.create(x, y, 'brick').scale.setTo(length, 1);
     },
     createFloor: function(x, length) {
+        if(length === undefined) {
+            length = 1;
+        }
 
         for(var i = 0; i < length; i++) {
             this.floor.create(x, this.game.world.height-112, 'grass');
             x += 1300;
+        }
+    },
+    createSpike: function(x, y, num) {
+        if(num === undefined) {
+            num = 1;
+        }
+
+        for(var i = 0; i < num; i++) {
+            this.spikes.create(x, y, 'spike');
+            x += 32;
+        }
+    },
+    createCoin: function(x, y, num) {
+        if(num === undefined) {
+            num = 1;
+        }
+        for(var i = 0; i < num; i++) {
+            this.coins.create(x, y, 'coin');
+            x += 50;
         }
     }
 };
