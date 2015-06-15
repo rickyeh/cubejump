@@ -18,6 +18,8 @@ Preload.prototype = {
         this.load.audio('jump', 'assets/jump.wav');
         this.load.audio('coin', 'assets/coin.wav');
         this.load.audio('death', 'assets/death.wav');
+
+        this.load.audio('music', ['assets/music_5th.mp3']);
     },
     create: function() {
         this.game.state.start('Title');

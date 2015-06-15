@@ -48,6 +48,9 @@ Main.prototype = {
         this.coinSound = this.game.add.audio('coin');
         this.deathSound = this.game.add.audio('death');
         this.jumpSound = this.game.add.audio('jump');
+        this.music = this.game.add.audio('music');
+
+        this.music.play();
 
         // Create the world objects depending on stage selected
         switch(stageSelect) {
