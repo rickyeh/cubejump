@@ -28,7 +28,7 @@ Title.prototype = {
         this.button.scale.set(0.7, 0.7);
 
         // REPLACE CODE FOR ENDLESS
-        this.endlessButton = this.game.add.button(this.game.world.centerX + 200, this.game.world.centerY + 200, 'playButton', this.startEndless, this);
+        this.endlessButton = this.game.add.button(this.game.world.centerX + 200, this.game.world.centerY + 200, 'endlessButton', this.startEndless, this);
         this.endlessButton.anchor.set(0.5);
         this.endlessButton.scale.set(0.7, 0.7);
 
