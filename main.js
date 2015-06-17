@@ -218,63 +218,63 @@ Main.prototype = {
         this.createRandomCoins(70);
     },
     startLevel1: function() {
+        X_GAMESPEED = -400;
         // 0
         this.createFloor(0, 3);
-        this.createSpike(1500, 600, 1);
-        this.createSpike(2400, 600, 2);
-        this.createSpike(3200, 600, 4);
+        this.createSpike(3, 600, 1);
+        this.createSpike(6, 600, 2);
+        this.createSpike(8, 600, 4);
 
         // 10 - 4000 px
-        this.createFloor(4200, 4);
-        this.createBrick(4450, 500, 2);
-        this.createBrick(5000, 500, 4);
-        this.createBrick(6000, 500, 8);
-        this.createSpike(6000, 600, 16);
-        this.createSpike(6900, 600, 16);
-        this.createBrick(7000, 500, 6);
-        this.createSpike(7400, 600, 16);
-        this.createBrick(7500, 500, 3);
-        this.createBrick(7700, 500, 3);
+        this.createFloor(10.5, 4);
+        this.createBrick(11.1, 500, 2);
+        this.createBrick(12.5, 500, 4);
+        this.createBrick(15, 500, 8);
+        this.createSpike(15, 600, 30);
+        this.createBrick(16, 500, 6);
+        this.createSpike(18.5, 600, 16);
+        this.createBrick(18.75, 500, 3);
+        this.createBrick(19.25, 500, 3);
 
         // 20 - 8000px
-        this.createCoin(8000, 600);
-        this.createSpike(8200, 600, 1);
-        this.createSpike(8450, 600, 2);
-        this.createSpike(8700, 600, 3);
-        this.createSpike(9000, 600, 4);
-        this.createSpike(9500, 600, 20);
-        this.createBrick(9600, 500, 6);
-        this.createBrick(9800, 400, 6);
-        this.createFloor(10000);
-        this.createSpike(10400, 600, 4);
-        this.createSpike(10800, 600, 4);
-        this.createBrick(11000, 500, 8);
-        this.createBrick(11800, 400, 6);
+        this.createCoin(20, 600);
+        this.createSpike(20.5, 600, 1);
+        this.createSpike(21.1, 600, 2);
+        this.createSpike(21.75, 600, 3);
+        this.createSpike(22.5, 600, 4);
+        this.createBrick(24, 500, 6);
+        this.createBrick(24.5, 400, 6);
+        this.createFloor(25);
+        this.createSpike(26, 600, 4);
+        this.createSpike(27, 600, 4);
+        this.createBrick(28.25, 500, 8);
+        this.createBrick(29.25, 400, 6);
+        this.createBrick(30, 300, 4);
 
         // 30 - 12000
-        this.createCoin(12000, 600);
+        this.createCoin(30, 600);
+        this.createFloor(12400);
 
         // 40 - 16000
-        this.createCoin(16000, 600);
+        this.createCoin(40, 600);
 
         // 50 - 20000
-        this.createCoin(20000, 600);
+        this.createCoin(50, 600);
 
         // 60
-        this.createCoin(24000, 600);
-
-        // this.createBrick(1800, 500, 2);
-        // this.createBrick(2200, 500, 2);
-        // this.createCoin(500, 600, 3);
-        // this.createSpike(900, 600, 30);
+        this.createCoin(60, 600);
     },
-    createBrick: function(x, y, length) {
+    createBrick: function(seconds, y, length) {
+        var x = seconds * 400;
+
         if(length === undefined) {
             length = 1;
         }
         this.platforms.create(x, y, 'brick').scale.setTo(length, 1);
     },
-    createFloor: function(x, length) {
+    createFloor: function(seconds, length) {
+        var x = seconds * 400;
+
         if(length === undefined) {
             length = 1;
         }
@@ -284,7 +284,9 @@ Main.prototype = {
             x += 1300;
         }
     },
-    createSpike: function(x, y, num) {
+    createSpike: function(seconds, y, num) {
+        var x = seconds * 400;
+
         if(num === undefined) {
             num = 1;
         }
@@ -294,7 +296,9 @@ Main.prototype = {
             x += 32;
         }
     },
-    createCoin: function(x, y, num) {
+    createCoin: function(seconds, y, num) {
+        var x = seconds * 400;
+
         if(num === undefined) {
             num = 1;
         }
