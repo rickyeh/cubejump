@@ -67,6 +67,13 @@ Main.prototype = {
                 break;
         }
 
+        // Debug
+        var debugX = 0;
+        for(var i = 0; i < 30; i++) {
+            this.createCoin(debugX, 100);
+            debugX += 800;
+        }
+
         this.platforms.setAll('body.allowGravity', false);
         this.platforms.setAll('body.immovable', true);
         this.platforms.setAll('body.velocity.x', X_GAMESPEED);
@@ -112,7 +119,6 @@ Main.prototype = {
         this.game.physics.arcade.collide(this.coins, this.platforms);
         this.game.physics.arcade.collide(this.coins, this.floor);
         this.game.physics.arcade.overlap(this.player, this.coins, this.collectCoin, null, this);
-
     },
 
     jump: function() {
@@ -131,7 +137,7 @@ Main.prototype = {
     die: function() {
         console.log('Player has died');
         this.deathSound.play();
-        this.resetGame();
+        // this.resetGame();
     },
 
     resetGame: function() {
@@ -212,13 +218,55 @@ Main.prototype = {
         this.createRandomCoins(70);
     },
     startLevel1: function() {
-        this.createFloor(0, 20);
-        this.createBrick(1000, 500, 2);
-        this.createBrick(1400, 500, 2);
-        this.createBrick(1800, 500, 2);
-        this.createBrick(2200, 500, 2);
-        this.createCoin(500, 600, 3);
-        this.createSpike(900, 600, 30);
+        // 0
+        this.createFloor(0, 3);
+        this.createSpike(1500, 600, 1);
+        this.createSpike(2400, 600, 2);
+        this.createSpike(3200, 600, 4);
+
+        // 10 - 4000 px
+        this.createFloor(4200, 4);
+        this.createBrick(4450, 500, 2);
+        this.createBrick(5000, 500, 4);
+        this.createBrick(6000, 500, 8);
+        this.createSpike(6000, 600, 16);
+        this.createSpike(6900, 600, 16);
+        this.createBrick(7000, 500, 6);
+        this.createSpike(7400, 600, 16);
+        this.createBrick(7500, 500, 3);
+        this.createBrick(7700, 500, 3);
+
+        // 20 - 8000px
+        this.createCoin(8000, 600);
+        this.createSpike(8200, 600, 1);
+        this.createSpike(8450, 600, 2);
+        this.createSpike(8700, 600, 3);
+        this.createSpike(9000, 600, 4);
+        this.createSpike(9500, 600, 20);
+        this.createBrick(9600, 500, 6);
+        this.createBrick(9800, 400, 6);
+        this.createFloor(10000);
+        this.createSpike(10400, 600, 4);
+        this.createSpike(10800, 600, 4);
+        this.createBrick(11000, 500, 8);
+        this.createBrick(11800, 400, 6);
+
+        // 30 - 12000
+        this.createCoin(12000, 600);
+
+        // 40 - 16000
+        this.createCoin(16000, 600);
+
+        // 50 - 20000
+        this.createCoin(20000, 600);
+
+        // 60
+        this.createCoin(24000, 600);
+
+        // this.createBrick(1800, 500, 2);
+        // this.createBrick(2200, 500, 2);
+        // this.createCoin(500, 600, 3);
+        // this.createSpike(900, 600, 30);
     },
     createBrick: function(x, y, length) {
         if(length === undefined) {
