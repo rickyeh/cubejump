@@ -98,6 +98,7 @@ Main.prototype = {
         this.game.physics.arcade.collide(this.player, this.platforms);
 
         this.game.physics.arcade.collide(this.spikes, this.floor);
+        this.game.physics.arcade.collide(this.spikes, this.platforms);
 
         // Collide player with spikes, and call die function
         this.game.physics.arcade.collide(this.player, this.spikes, this.die, null, this);
@@ -218,7 +219,7 @@ Main.prototype = {
         this.createRandomCoins(70);
     },
     startLevel1: function() {
-        X_GAMESPEED = -400;
+        X_GAMESPEED = -1000;
         // 0
         this.createFloor(0, 3);
         this.createSpike(3, 600, 1);
@@ -228,7 +229,7 @@ Main.prototype = {
         // 10 - 4000 px
         this.createFloor(10.5, 4);
         this.createBrick(11.1, 500, 2);
-        this.createBrick(12.5, 500, 4);
+        this.createBrick(12, 500, 4);
         this.createBrick(15, 500, 8);
         this.createSpike(15, 600, 30);
         this.createBrick(16, 500, 6);
@@ -253,10 +254,27 @@ Main.prototype = {
 
         // 30 - 12000
         this.createCoin(30, 600);
-        this.createFloor(12400);
+        this.createBrick(30.75, 200, 3);
+        this.createFloor(32);
+        this.createFloor(32.5);
+        this.createSpike(33, 600, 2);
+        this.createSpike(33.5, 600, 5);
+        this.createSpike(34.25, 600, 2);
+        this.createSpike(34.75, 600, 5);
+        this.createBrick(36, 500, 4);
+        this.createBrick(36.75, 400, 4);
+        this.createBrick(37.5, 300, 4);
+        this.createBrick(38.25, 200, 4);
+        this.createBrick(39, 100, 4);
 
         // 40 - 16000
         this.createCoin(40, 600);
+        this.createBrick(40, 200, 4);
+        this.createBrick(41, 300, 4);
+        this.createBrick(42, 400, 4);
+        this.createBrick(43, 500, 10);
+        this.createSpike(43.25, 400, 2);
+        this.createFloor(44);
 
         // 50 - 20000
         this.createCoin(50, 600);
