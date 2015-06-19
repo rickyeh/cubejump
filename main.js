@@ -15,7 +15,7 @@ Main.prototype = {
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
         // Add the player to the game
-        this.player = this.game.add.sprite(75, this.game.world.height - 150, 'ninja');
+        this.player = this.game.add.sprite(100, this.game.world.height - 150, 'ninja');
         this.player.anchor.setTo(0.4);
 
         // Enable physics to the player
@@ -33,6 +33,7 @@ Main.prototype = {
         // Initialize Physics for obstacles
         this.platforms = this.add.physicsGroup();
         this.spikes = this.add.physicsGroup();
+        this.flag = this.add.physicsGroup();
 
         // Initialize floor
         this.floor = this.game.add.group();
@@ -51,7 +52,7 @@ Main.prototype = {
 
         if (this.music === undefined) {
             this.music = this.game.add.audio('music');
-            this.music.play();
+            this.music.loopFull();
         }
 
         // Create the world objects depending on stage selected
@@ -67,12 +68,12 @@ Main.prototype = {
                 break;
         }
 
-        // Debug
-        var debugX = 0;
-        for(var i = 0; i < 30; i++) {
-            this.createCoin(debugX, 100);
-            debugX += 800;
-        }
+        // // Debug
+        // var debugX = 0;
+        // for(var i = 0; i < 30; i++) {
+        //     this.createCoin(debugX, 100);
+        //     debugX += 800;
+        // }
 
         this.platforms.setAll('body.allowGravity', false);
         this.platforms.setAll('body.immovable', true);
@@ -87,6 +88,9 @@ Main.prototype = {
         this.spikes.setAll('body.velocity.x', X_GAMESPEED);
         this.spikes.setAll('body.gravity.y', 4000);
         this.coins.setAll('body.velocity.x', X_GAMESPEED);
+        this.flag.setAll('body.immovable', false);
+        this.flag.setAll('body.velocity.x', X_GAMESPEED);
+        this.flag.setAll('body.gravity.y', 4000);
     },
 
     update: function() {
@@ -100,6 +104,9 @@ Main.prototype = {
         this.game.physics.arcade.collide(this.spikes, this.floor);
         this.game.physics.arcade.collide(this.spikes, this.platforms);
 
+        this.game.physics.arcade.collide(this.flag, this.floor);
+        this.game.physics.arcade.collide(this.flag, this.player, this.victory, null, this);
+
         // Collide player with spikes, and call die function
         this.game.physics.arcade.collide(this.player, this.spikes, this.die, null, this);
 
@@ -110,7 +117,7 @@ Main.prototype = {
         // If player gets pushed back, slowly move cube back to starting position.
         if (this.player.x < 0) {
             this.die();
-        } else if (this.player.x < 75  && this.player.body.velocity.x === 0) {
+        } else if (this.player.x < 100  && this.player.body.velocity.x === 0) {
             this.player.body.velocity.x = 10;
         } else if (this.player.y > this.game.world.height + 1000) {
             this.die();
@@ -138,7 +145,7 @@ Main.prototype = {
     die: function() {
         console.log('Player has died');
         this.deathSound.play();
-        // this.resetGame();
+        this.resetGame();
     },
 
     resetGame: function() {
@@ -194,10 +201,10 @@ Main.prototype = {
         var y = 100;
         var gap = 0;
 
-        // Create 12 stars efvenly spaced apart
+
         for (var i = 0; i < numOfCoins; i++) {
-            //Create a star inside of the 'stars' group
-            var coin = this.coins.create(x + gap, y, 'coin');
+
+            this.coins.create(x + gap, y, 'coin');
 
             x += gap;
             gap = this.game.rnd.integerInRange(200,500);
@@ -219,15 +226,18 @@ Main.prototype = {
         this.createRandomCoins(70);
     },
     startLevel1: function() {
-        X_GAMESPEED = -400;
-        // 0
-        this.createFloor(0, 3);
-        this.createSpike(3, 600, 1);
-        this.createSpike(6, 600, 2);
-        this.createSpike(8, 600, 4);
+        X_GAMESPEED = -500;
 
-        // 10 - 4000 px
-        this.createFloor(10.5, 4);
+        // 0
+        this.createFloor(0, 10);
+        this.createSpike(2, 600, 2);
+        this.createSpike(4, 600, 4);
+        this.createSpike(6, 600, 6)
+        this.createSpike(8, 600, 8);
+
+        // 10
+        //this.createFloor(10, 1);
+        this.createFloor(11, 12)
         this.createBrick(11.5, 500, 2);
         this.createBrick(12.5, 500, 4);
         this.createBrick(15, 500, 8);
@@ -237,44 +247,41 @@ Main.prototype = {
         this.createBrick(18.75, 500, 3);
         this.createBrick(19.25, 500, 3);
 
-        // 20 - 8000px
-        this.createCoin(20, 600);
+        // 20
         this.createSpike(20.5, 600, 1);
         this.createSpike(21.1, 600, 2);
         this.createSpike(21.75, 600, 3);
         this.createSpike(22.5, 600, 4);
-        this.createBrick(24, 500, 6);
-        this.createBrick(24.5, 400, 6);
-        this.createFloor(25);
+        this.createBrick(23.25, 500, 6);
+        this.createBrick(24, 400, 6);
+        this.createFloor(25, 3);
         this.createSpike(26, 600, 4);
         this.createSpike(27, 600, 4);
         this.createBrick(28.25, 500, 8);
         this.createBrick(29.25, 400, 6);
         this.createBrick(30, 300, 4);
 
-        // 30 - 12000
-        this.createCoin(30, 600);
+        // 30
         this.createBrick(30.75, 200, 3);
-        this.createFloor(32);
-        this.createFloor(32.5);
+        this.createFloor(32, 3); // Close one
         this.createSpike(33, 600, 2);
         this.createSpike(33.5, 600, 5);
         this.createSpike(34.25, 600, 2);
         this.createSpike(34.75, 600, 5);
+        this.createFloor(35);
         this.createBrick(36, 500, 4);
         this.createBrick(36.75, 400, 4);
         this.createBrick(37.5, 300, 4);
         this.createBrick(38.25, 200, 4);
         this.createBrick(39, 100, 4);
 
-        // 40 - 16000
-        this.createCoin(40, 600);
+        // 40
         this.createBrick(40, 200, 4);
         this.createBrick(41, 300, 4);
         this.createBrick(42, 400, 4);
         this.createBrick(43, 500, 10);
         this.createSpike(43.25, 400, 2);
-        this.createFloor(44);
+        this.createFloor(44, 3);
         this.createSpike(44.5, 600);
         this.createSpike(45, 600);
         this.createSpike(45.5, 600);
@@ -285,8 +292,7 @@ Main.prototype = {
         this.createBrick(48.25, 400, 4);
         this.createBrick(49, 300, 4);
 
-        // 50 - 20000
-        this.createCoin(50, 600);
+        // 50
         this.createBrick(50, 400, 4);
         this.createBrick(51, 400, 4);
         this.createBrick(52, 400, 10);
@@ -297,14 +303,13 @@ Main.prototype = {
         this.createBrick(55.75, 300, 2);
         this.createBrick(56.5, 250, 8);
         this.createBrick(58, 400, 2);
-        this.createFloor(59, 2);
-
+        this.createFloor(59, 5);
 
         // 60
-        this.createCoin(60, 600);
+         this.placeFlag(60, 200);
     },
     createBrick: function(seconds, y, length) {
-        var x = seconds * 400;
+        var x = seconds * 500;
 
         if(length === undefined) {
             length = 1;
@@ -312,7 +317,7 @@ Main.prototype = {
         this.platforms.create(x, y, 'brick').scale.setTo(length, 1);
     },
     createFloor: function(seconds, length) {
-        var x = seconds * 400;
+        var x = seconds * 500;
 
         if(length === undefined) {
             length = 1;
@@ -320,11 +325,11 @@ Main.prototype = {
 
         for(var i = 0; i < length; i++) {
             this.floor.create(x, this.game.world.height-112, 'grass');
-            x += 1300;
+            x += 500;
         }
     },
     createSpike: function(seconds, y, num) {
-        var x = seconds * 400;
+        var x = seconds * 500;
 
         if(num === undefined) {
             num = 1;
@@ -336,7 +341,7 @@ Main.prototype = {
         }
     },
     createCoin: function(seconds, y, num) {
-        var x = seconds * 400;
+        var x = seconds * 500;
 
         if(num === undefined) {
             num = 1;
@@ -345,5 +350,18 @@ Main.prototype = {
             this.coins.create(x, y, 'coin');
             x += 50;
         }
+    },
+    placeFlag: function(seconds, y) {
+        var x = seconds * 500;
+
+        this.flag.create(x, y, 'flagpole');
+    },
+    victory: function() {
+        this.platforms.setAll('body.velocity.x', 0);
+        this.floor.setAll('body.velocity.x', 0);
+        this.spikes.setAll('body.velocity.x', 0);
+        this.coins.setAll('body.velocity.x', 0);
+        this.flag.setAll('body.velocity.x', 0);
+
     }
 };
