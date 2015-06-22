@@ -11,6 +11,8 @@ var Main = function(game) {
 Main.prototype = {
 
     create: function() {
+        this.game.world.setBounds(0, 0, 35000, 750);
+
         // Set background color, start physics engine
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
@@ -29,6 +31,10 @@ Main.prototype = {
 
         // Added mouse / touch functionality for jumping
         this.input.onDown.add(this.jump, this);
+
+        // Add scroll buttons for level editor
+        this.cursors = this.game.input.keyboard.createCursorKeys();
+
 
         // Initialize Physics for obstacles
         this.platforms = this.add.physicsGroup();
@@ -127,6 +133,13 @@ Main.prototype = {
         this.game.physics.arcade.collide(this.coins, this.platforms);
         this.game.physics.arcade.collide(this.coins, this.floor);
         this.game.physics.arcade.overlap(this.player, this.coins, this.collectCoin, null, this);
+
+        // Scrolling keybinds for level editor
+        if(this.cursors.left.isDown) {
+            this.game.camera.x -= 50;
+        } else if (this.cursors.right.isDown) {
+            this.game.camera.x += 50;
+        }
     },
 
     jump: function() {
@@ -226,18 +239,18 @@ Main.prototype = {
         this.createRandomCoins(70);
     },
     startLevel1: function() {
-        X_GAMESPEED = -500;
+        X_GAMESPEED = -0;
 
         // 0
         this.createFloor(0, 10);
         this.createSpike(2, 600, 2);
         this.createSpike(4, 600, 4);
-        this.createSpike(6, 600, 6)
+        this.createSpike(6, 600, 6);
         this.createSpike(8, 600, 8);
 
         // 10
         //this.createFloor(10, 1);
-        this.createFloor(11, 12)
+        this.createFloor(11, 12);
         this.createBrick(11.5, 500, 2);
         this.createBrick(12.5, 500, 4);
         this.createBrick(15, 500, 8);
