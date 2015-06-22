@@ -35,6 +35,17 @@ Main.prototype = {
         // Add scroll buttons for level editor
         this.cursors = this.game.input.keyboard.createCursorKeys();
 
+        this.jumpButton = this.game.input.keyboard.addKey(Phaser.Keyboard.ONE);
+        this.jumpButton.onDown.add(this.oneToggle, this);
+        this.jumpButton = this.game.input.keyboard.addKey(Phaser.Keyboard.TWO);
+        this.jumpButton.onDown.add(this.twoToggle, this);
+        this.jumpButton = this.game.input.keyboard.addKey(Phaser.Keyboard.THREE);
+        this.jumpButton.onDown.add(this.threeToggle, this);
+        this.jumpButton = this.game.input.keyboard.addKey(Phaser.Keyboard.FOUR);
+        this.jumpButton.onDown.add(this.fourToggle, this);
+        this.jumpButton = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+        this.jumpButton.onDown.add(this.placeItem, this);
+
 
         // Initialize Physics for obstacles
         this.platforms = this.add.physicsGroup();
@@ -137,8 +148,10 @@ Main.prototype = {
         // Scrolling keybinds for level editor
         if(this.cursors.left.isDown) {
             this.game.camera.x -= 50;
+            console.log('Left');
         } else if (this.cursors.right.isDown) {
             this.game.camera.x += 50;
+            console.log('Right');
         }
     },
 
@@ -375,6 +388,20 @@ Main.prototype = {
         this.spikes.setAll('body.velocity.x', 0);
         this.coins.setAll('body.velocity.x', 0);
         this.flag.setAll('body.velocity.x', 0);
-
+    },
+    oneToggle: function() {
+        console.log('One');
+    },
+    twoToggle: function() {
+        console.log('Two');
+    },
+    threeToggle: function() {
+        console.log('Three');
+    },
+    fourToggle: function() {
+        console.log('Four');
+    },
+    placeItem: function() {
+        console.log('Spacebar');
     }
 };
