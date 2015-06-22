@@ -7,6 +7,7 @@ var Main = function(game) {
     this.jumpCount = 0;
     this.score = 0;
     this.scoreText = '';
+    this.blockType = 1; // 1 = brick, 2: spike, 3: coin, 4: floor
 };
 
 Main.prototype = {
@@ -26,26 +27,22 @@ Main.prototype = {
         this.player.body.gravity.y = 4000;
         this.player.body.collideWorldBounds = false;
 
-        // Add the jump button
-        this.jumpButton = this.game.input.keyboard.addKey(Phaser.Keyboard.UP);
-        this.jumpButton.onDown.add(this.jump, this);
-
         // Added mouse / touch functionality for jumping
-        this.input.onDown.add(this.jump, this);
+        this.input.onDown.add(this.onMouseOrTouch, this);
 
+
+
+        var keyboard = this.game.input.keyboard;
+        
         // Add scroll buttons for level editor
-        this.cursors = this.game.input.keyboard.createCursorKeys();
+        this.cursors = keyboard.createCursorKeys();
 
-        this.jumpButton = this.game.input.keyboard.addKey(Phaser.Keyboard.ONE);
-        this.jumpButton.onDown.add(this.oneToggle, this);
-        this.jumpButton = this.game.input.keyboard.addKey(Phaser.Keyboard.TWO);
-        this.jumpButton.onDown.add(this.twoToggle, this);
-        this.jumpButton = this.game.input.keyboard.addKey(Phaser.Keyboard.THREE);
-        this.jumpButton.onDown.add(this.threeToggle, this);
-        this.jumpButton = this.game.input.keyboard.addKey(Phaser.Keyboard.FOUR);
-        this.jumpButton.onDown.add(this.fourToggle, this);
-        this.jumpButton = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-        this.jumpButton.onDown.add(this.placeItem, this);
+        keyboard.addKey(Phaser.Keyboard.UP).onDown.add(this.jump, this);
+        keyboard.addKey(Phaser.Keyboard.ONE).onDown.add(this.oneToggle, this);
+        keyboard.addKey(Phaser.Keyboard.TWO).onDown.add(this.twoToggle, this);
+        keyboard.addKey(Phaser.Keyboard.THREE).onDown.add(this.threeToggle, this);
+        keyboard.addKey(Phaser.Keyboard.FOUR).onDown.add(this.fourToggle, this);
+        keyboard.addKey(Phaser.Keyboard.SPACEBAR).onDown.add(this.placeItem, this);
 
 
         // Initialize Physics for obstacles
@@ -160,6 +157,14 @@ Main.prototype = {
             this.game.camera.x += 50;
             console.log('Right');
         }
+    },
+
+    onMouseOrTouch : function() {
+        var itemX = game.camera.x + game.input.x;
+        var itemY = game.input.y;
+        console.log('Place item ' + this.blockType + ' at ' + itemX + ', ' + itemY);
+        
+        // this.jump();
     },
 
     jump: function() {
@@ -321,18 +326,22 @@ Main.prototype = {
 
     oneToggle: function() {
         console.log('One');
+        this.blockType = 1;
     },
 
     twoToggle: function() {
         console.log('Two');
+        this.blockType = 2;
     },
 
     threeToggle: function() {
         console.log('Three');
+        this.blockType = 3;
     },
 
     fourToggle: function() {
         console.log('Four');
+        this.blockType = 4;
     },
 
     placeItem: function() {
