@@ -1,6 +1,5 @@
 var Preload = function(game) {
-    console.log('preload state called');
-
+    console.log('Preload State Loaded');
 };
 
 Preload.prototype = {

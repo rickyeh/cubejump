@@ -1,7 +1,7 @@
 var stageSelect = 0;
 
 var Title = function(game) {
-    console.log('title state called');
+    console.log('Title State Loaded');
 };
 
 
