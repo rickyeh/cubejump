@@ -8,22 +8,23 @@ var Main = function(game) {
     this.score = 0;
     this.scoreText = '';
     this.blockType = 1; // 1 = brick, 2: spike, 3: coin, 4: floor
+    this.quantity = 1;
 };
 
 Main.prototype = {
 
     create: function() {
-        this.game.world.setBounds(0, 0, 35000, 750);
+        game.world.setBounds(0, 0, 35000, 750);
 
         // Set background color, start physics engine
-        this.game.physics.startSystem(Phaser.Physics.ARCADE);
+        game.physics.startSystem(Phaser.Physics.ARCADE);
 
         // Add the player to the game
-        this.player = this.game.add.sprite(100, this.game.world.height - 150, 'ninja');
+        this.player = game.add.sprite(100, game.world.height - 150, 'ninja');
         this.player.anchor.setTo(0.4);
 
         // Enable physics to the player
-        this.game.physics.arcade.enable(this.player);
+        game.physics.arcade.enable(this.player);
         this.player.body.gravity.y = 4000;
         this.player.body.collideWorldBounds = false;
 
@@ -32,17 +33,26 @@ Main.prototype = {
 
 
 
-        var keyboard = this.game.input.keyboard;
+        var keyboard = game.input.keyboard;
         
         // Add scroll buttons for level editor
         this.cursors = keyboard.createCursorKeys();
 
         keyboard.addKey(Phaser.Keyboard.UP).onDown.add(this.jump, this);
-        keyboard.addKey(Phaser.Keyboard.ONE).onDown.add(this.oneToggle, this);
-        keyboard.addKey(Phaser.Keyboard.TWO).onDown.add(this.twoToggle, this);
-        keyboard.addKey(Phaser.Keyboard.THREE).onDown.add(this.threeToggle, this);
-        keyboard.addKey(Phaser.Keyboard.FOUR).onDown.add(this.fourToggle, this);
+        keyboard.addKey(Phaser.Keyboard.A).onDown.add(this.brickToggle, this);
+        keyboard.addKey(Phaser.Keyboard.S).onDown.add(this.spikeToggle, this);
+        keyboard.addKey(Phaser.Keyboard.D).onDown.add(this.coinToggle, this);
+        keyboard.addKey(Phaser.Keyboard.F).onDown.add(this.floorToggle, this);
         keyboard.addKey(Phaser.Keyboard.SPACEBAR).onDown.add(this.placeItem, this);
+        keyboard.addKey(Phaser.Keyboard.ONE).onDown.add(this.oneSwitch, this);
+        keyboard.addKey(Phaser.Keyboard.TWO).onDown.add(this.twoSwitch, this);
+        keyboard.addKey(Phaser.Keyboard.THREE).onDown.add(this.threeSwitch, this);
+        keyboard.addKey(Phaser.Keyboard.FOUR).onDown.add(this.fourSwitch, this);
+        keyboard.addKey(Phaser.Keyboard.FIVE).onDown.add(this.fiveSwitch, this);
+        keyboard.addKey(Phaser.Keyboard.SIX).onDown.add(this.sixSwitch, this);
+        keyboard.addKey(Phaser.Keyboard.SEVEN).onDown.add(this.sevenSwitch, this);
+        keyboard.addKey(Phaser.Keyboard.EIGHT).onDown.add(this.eightSwitch, this);
+        keyboard.addKey(Phaser.Keyboard.NINE).onDown.add(this.nineSwitch, this);
 
 
         // Initialize Physics for obstacles
@@ -51,25 +61,25 @@ Main.prototype = {
         this.flag = this.add.physicsGroup();
 
         // Initialize floor
-        this.floor = this.game.add.group();
+        this.floor = game.add.group();
         this.floor.enableBody = true;
 
-        this.coins = this.game.add.group();
+        this.coins = game.add.group();
         this.coins.enableBody = true;
 
         // Initialize Scoreboard
-        this.scoreText = this.game.add.text(1165, 16, 'Score: 0', {
+        this.scoreText = game.add.text(1165, 16, 'Score: 0', {
             fontSize: '32px',
             fill: '#000'
         });
 
         // Iniitialize audio
-        this.coinSound = this.game.add.audio('coin');
-        this.deathSound = this.game.add.audio('death');
-        this.jumpSound = this.game.add.audio('jump');
+        this.coinSound = game.add.audio('coin');
+        this.deathSound = game.add.audio('death');
+        this.jumpSound = game.add.audio('jump');
 
         if (!this.music && !MUTE) {
-            this.music = this.game.add.audio('music');
+            this.music = game.add.audio('music');
             this.music.loopFull();
         }
 
@@ -94,24 +104,24 @@ Main.prototype = {
         // }
 
         // DEBUG. Make the world faster! (or slower)
-        X_GAMESPEED = 0;
+        //X_GAMESPEED = 0;
 
         this.platforms.setAll('body.allowGravity', false);
         this.platforms.setAll('body.immovable', true);
-        this.platforms.setAll('body.velocity.x', -X_GAMESPEED);
         this.platforms.setAll('body.friction.x', 0);
         this.floor.setAll('body.allowGravity', false);
         this.floor.setAll('body.immovable', true);
-        this.floor.setAll('body.velocity.x', -X_GAMESPEED);
         this.floor.setAll('body.friction.x', 0);
         this.spikes.setAll('body.allowGravity', true);
         this.spikes.setAll('body.immovable', false);
-        this.spikes.setAll('body.velocity.x', -X_GAMESPEED);
         this.spikes.setAll('body.gravity.y', 4000);
-        this.coins.setAll('body.velocity.x', -X_GAMESPEED);
         this.flag.setAll('body.immovable', false);
-        this.flag.setAll('body.velocity.x', -X_GAMESPEED);
         this.flag.setAll('body.gravity.y', 4000);
+        //this.platforms.setAll('body.velocity.x', -X_GAMESPEED);
+        //this.flag.setAll('body.velocity.x', -X_GAMESPEED);
+        //this.coins.setAll('body.velocity.x', -X_GAMESPEED);
+        //this.spikes.setAll('body.velocity.x', -X_GAMESPEED);
+        //this.floor.setAll('body.velocity.x', -X_GAMESPEED);
     },
 
     update: function() {
@@ -119,17 +129,17 @@ Main.prototype = {
         this.player.body.velocity.x = 0;
 
         // Collide player with floor (or the ground)
-        this.game.physics.arcade.collide(this.player, this.floor);
-        this.game.physics.arcade.collide(this.player, this.platforms);
+        game.physics.arcade.collide(this.player, this.floor);
+        game.physics.arcade.collide(this.player, this.platforms);
 
-        this.game.physics.arcade.collide(this.spikes, this.floor);
-        this.game.physics.arcade.collide(this.spikes, this.platforms);
+        game.physics.arcade.collide(this.spikes, this.floor);
+        game.physics.arcade.collide(this.spikes, this.platforms);
 
-        this.game.physics.arcade.collide(this.flag, this.floor);
-        this.game.physics.arcade.collide(this.flag, this.player, this.victory, null, this);
+        game.physics.arcade.collide(this.flag, this.floor);
+        game.physics.arcade.collide(this.flag, this.player, this.victory, null, this);
 
         // Collide player with spikes, and call die function
-        this.game.physics.arcade.collide(this.player, this.spikes, this.die, null, this);
+        game.physics.arcade.collide(this.player, this.spikes, this.die, null, this);
 
         if (this.player.body.touching.down && this.jumpCount > 0) {
             this.jumpCount = 0;
@@ -140,29 +150,47 @@ Main.prototype = {
             this.die();
         } else if (this.player.x < 100 && this.player.body.velocity.x === 0) {
             this.player.body.velocity.x = 10;
-        } else if (this.player.y > this.game.world.height + 1000) {
+        } else if (this.player.y > game.world.height + 1000) {
             this.die();
         }
 
         // Collision for coins
-        this.game.physics.arcade.collide(this.coins, this.platforms);
-        this.game.physics.arcade.collide(this.coins, this.floor);
-        this.game.physics.arcade.overlap(this.player, this.coins, this.collectCoin, null, this);
+        game.physics.arcade.collide(this.coins, this.platforms);
+        game.physics.arcade.collide(this.coins, this.floor);
+        game.physics.arcade.overlap(this.player, this.coins, this.collectCoin, null, this);
 
         // Scrolling keybinds for level editor
         if (this.cursors.left.isDown) {
-            this.game.camera.x -= 50;
+            game.camera.x -= 50;
             console.log('Left');
         } else if (this.cursors.right.isDown) {
-            this.game.camera.x += 50;
+            game.camera.x += 50;
             console.log('Right');
         }
     },
 
     onMouseOrTouch : function() {
-        var itemX = game.camera.x + game.input.x;
+        var itemX = (game.camera.x + game.input.x)/500;
         var itemY = game.input.y;
-        console.log('Place item ' + this.blockType + ' at ' + itemX + ', ' + itemY);
+
+        switch (this.blockType) {
+            case 1:
+                console.log('this.createBrick('+ itemX +', ' + itemY + ', ' + this.quantity +');');
+                this.createBrick(itemX, itemY, this.quantity);
+                break;
+            case 2:
+                console.log('this.createSpike('+ itemX +', ' + itemY + ', ' + this.quantity +');');
+                this.createSpike(itemX, itemY, this.quantity);
+                break;
+            case 3:
+                console.log('this.createCoin('+ itemX +', ' + itemY + ', ' + this.quantity +');');
+                this.createCoin(itemX, itemY, this.quantity);
+                break;
+            case 4:
+                console.log('this.createFloor('+ itemX +', ' + itemY + ', ' + this.quantity +');');
+                this.createFloor(itemX, this.quantity);
+                break;
+        }
         
         // this.jump();
     },
@@ -176,7 +204,7 @@ Main.prototype = {
             this.player.body.velocity.y = -1000;
         }
         if (this.jumpCount === 2) {
-            this.game.add.tween(this.player).to({
+            game.add.tween(this.player).to({
                 angle: 360
             }, 400, Phaser.Easing.Linear.None, true);
         }
@@ -190,7 +218,7 @@ Main.prototype = {
 
     resetGame: function() {
         this.score = 0;
-        this.game.state.start('Main');
+        game.state.start('Main');
     },
 
     createRandomGround: function(numOfGround) {
@@ -199,9 +227,9 @@ Main.prototype = {
 
         // Creates the ground
         for (var i = 0; i < numOfGround; i++) {
-            this.floor.create(x + gap, this.game.world.height - 112, 'grass');
+            this.floor.create(x + gap, game.world.height - 112, 'grass');
             x += 1328 + gap;
-            gap = this.game.rnd.integerInRange(100, 350);
+            gap = game.rnd.integerInRange(100, 350);
         }
     },
 
@@ -213,10 +241,10 @@ Main.prototype = {
         this.platforms.create(450, 450, 'platform');
 
         while (platformCount < numOfPlatforms) {
-            this.platforms.create(x + gap, this.game.rnd.integerInRange(200, 450), 'platform');
+            this.platforms.create(x + gap, game.rnd.integerInRange(200, 450), 'platform');
             platformCount++;
             x += gap;
-            gap = this.game.rnd.integerInRange(450, 800);
+            gap = game.rnd.integerInRange(450, 800);
         }
     },
 
@@ -229,7 +257,7 @@ Main.prototype = {
         while (spikeCount < numOfSpikes) {
             this.spikes.create(x + gap, y, 'spike');
             x += gap;
-            gap = this.game.rnd.integerInRange(100, 600);
+            gap = game.rnd.integerInRange(100, 600);
             spikeCount++;
         }
     },
@@ -243,7 +271,7 @@ Main.prototype = {
             this.coins.create(x + gap, y, 'coin');
 
             x += gap;
-            gap = this.game.rnd.integerInRange(200, 500);
+            gap = game.rnd.integerInRange(200, 500);
         }
         this.coins.setAll('body.gravity.y', 4000);
     },
@@ -281,7 +309,7 @@ Main.prototype = {
         }
 
         for (var i = 0; i < length; i++) {
-            this.floor.create(x, this.game.world.height - 112, 'grass');
+            this.floor.create(x, game.world.height - 112, 'grass');
             x += 500; // each floor tile is 500px wide
         }
     },
@@ -324,27 +352,51 @@ Main.prototype = {
         this.flag.setAll('body.velocity.x', 0);
     },
 
-    oneToggle: function() {
-        console.log('One');
+    brickToggle: function() {
         this.blockType = 1;
     },
 
-    twoToggle: function() {
-        console.log('Two');
+    spikeToggle: function() {
         this.blockType = 2;
     },
 
-    threeToggle: function() {
-        console.log('Three');
+    coinToggle: function() {
         this.blockType = 3;
     },
 
-    fourToggle: function() {
-        console.log('Four');
+    floorToggle: function() {
         this.blockType = 4;
     },
 
     placeItem: function() {
         console.log('Spacebar');
-    }
+    },
+
+    oneSwitch: function() {
+        this.quantity = 1;
+    },
+    twoSwitch: function() {
+        this.quantity = 2;
+    },
+    threeSwitch: function() {
+        this.quantity = 3;
+    },
+    fourSwitch: function() {
+        this.quantity = 4;
+    },
+    fiveSwitch: function() {
+        this.quantity = 5;
+    },
+    sixSwitch: function() {
+        this.quantity = 6;
+    },
+    sevenSwitch: function() {
+        this.quantity = 7;
+    },
+    eightSwitch: function() {
+        this.quantity = 8;
+    },
+    nineSwitch: function() {
+        this.quantity = 9;
+    },
 };
