@@ -34,7 +34,7 @@ Title.prototype = {
 
     },
     startNormal: function() {
-        stageSelect = 1;
+        stageSelect = 2;
         this.game.state.start('Main');
     },
     startEndless: function() {
