@@ -38,6 +38,8 @@ Main.prototype = {
         this.cursors = keyboard.createCursorKeys();
 
         keyboard.addKey(Phaser.Keyboard.UP).onDown.add(this.jump, this);
+        keyboard.addKey(Phaser.Keyboard.TILDE).onDown.add(this.debugToggle, this);
+
 
         if (DEBUG_MODE) {
             keyboard.addKey(Phaser.Keyboard.A).onDown.add(this.brickToggle, this);
@@ -190,10 +192,8 @@ Main.prototype = {
         // Scrolling keybinds for level editor
         if (this.cursors.left.isDown) {
             game.camera.x -= 50;
-            console.log('Left');
         } else if (this.cursors.right.isDown) {
             game.camera.x += 50;
-            console.log('Right');
         }
 
         //  In debug, display X, Y, Qty, Type for level editing
@@ -389,6 +389,15 @@ Main.prototype = {
         this.player.body.velocity.x = 0;
 
         // Display win message, go to next level
+    },
+    debugToggle: function() {
+        if (DEBUG_MODE) {
+            console.log('Debug Mode : OFF');
+            DEBUG_MODE = false;
+        } else {
+            console.log('Debug Mode : ON');
+            DEBUG_MODE = true;
+        }
     },
 
     brickToggle: function() {
