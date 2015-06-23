@@ -1,5 +1,6 @@
 var X_GAMESPEED = 500; // pixels per second
 var MUTE = true;
+var DEBUG_MODE = true;
 
 var Main = function(game) {
     console.log('main state called');
@@ -31,14 +32,14 @@ Main.prototype = {
         // Added mouse / touch functionality for jumping
         this.input.onDown.add(this.onMouseOrTouch, this);
 
-
-
         var keyboard = game.input.keyboard;
         
         // Add scroll buttons for level editor
         this.cursors = keyboard.createCursorKeys();
 
         keyboard.addKey(Phaser.Keyboard.UP).onDown.add(this.jump, this);
+
+
         keyboard.addKey(Phaser.Keyboard.A).onDown.add(this.brickToggle, this);
         keyboard.addKey(Phaser.Keyboard.S).onDown.add(this.spikeToggle, this);
         keyboard.addKey(Phaser.Keyboard.D).onDown.add(this.coinToggle, this);
@@ -72,6 +73,34 @@ Main.prototype = {
             fontSize: '32px',
             fill: '#000'
         });
+        this.scoreText.fixedToCamera = true;
+
+        if (DEBUG_MODE) {
+            this.xText = game.add.text(1165, 50, 'X Secs: ', {
+                fontSize: '20px',
+                fill: '#000'
+            });
+            this.yText = game.add.text(1165, 70, 'Y: 0' + this.yPos, {
+                fontSize: '20px',
+                fill: '#000'
+            });
+            this.qtyText = game.add.text(1165, 90, 'Qty: 0' + this.quantity, {
+                fontSize: '20px',
+                fill: '#000'
+            });
+            this.blockText = game.add.text(1165, 110, 'Type: ' + this.blockType, {
+                fontSize: '20px',
+                fill: '#000'
+            });
+
+            this.xText.fixedToCamera = true;
+            this.yText.fixedToCamera = true;
+            this.qtyText.fixedToCamera = true;
+            this.blockText.fixedToCamera = true;
+
+
+        }
+
 
         // Iniitialize audio
         this.coinSound = game.add.audio('coin');
@@ -96,12 +125,6 @@ Main.prototype = {
                 break;
         }
 
-        // // Debug
-        // var debugX = 0;
-        // for(var i = 0; i < 30; i++) {
-        //     this.createCoin(debugX, 100);
-        //     debugX += 800;
-        // }
 
         // DEBUG. Make the world faster! (or slower)
         //X_GAMESPEED = 0;
@@ -166,6 +189,14 @@ Main.prototype = {
         } else if (this.cursors.right.isDown) {
             game.camera.x += 50;
             console.log('Right');
+        }
+
+        //  In debug, display X, Y, Qty, Type for level editing
+        if (DEBUG_MODE) {
+            this.xText.text = 'X Secs : ' + (game.camera.x + game.input.x)/500;
+            this.yText.text = 'Y : ' + game.input.y;
+            this.qtyText.text = 'Qty : ' + this.quantity;
+            this.blockText.text = 'Type: ' + this.blockType;
         }
     },
 
