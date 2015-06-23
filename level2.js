@@ -64,6 +64,6 @@ var Level2 = {
         this.createBrick(38, 400, 2);
         this.createFloor(39, 5);
         
-        this.placeFlag(40, 200);
+        this.placeFlag(40);
     }
 };

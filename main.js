@@ -1,5 +1,6 @@
 var X_GAMESPEED = 500; // pixels per second
 var DEBUG_MODE = true;
+var victoryFlag = false;
 
 var Main = function(game) {
     console.log('Main State Loaded');
@@ -130,10 +131,13 @@ Main.prototype = {
                 break;
             case 3:
                 // Level3.start.call(this);
+                break;
             default:
                 this.startEndless();
                 break;
         }
+
+        victoryFlag = false;
 
         this.platforms.setAll('body.allowGravity', false);
         this.platforms.setAll('body.immovable', true);
@@ -144,8 +148,11 @@ Main.prototype = {
         this.spikes.setAll('body.allowGravity', true);
         this.spikes.setAll('body.immovable', false);
         this.spikes.setAll('body.gravity.y', 4000);
-        this.flag.setAll('body.immovable', false);
+        this.flag.setAll('body.immovable', true);
         this.flag.setAll('body.gravity.y', 4000);
+        this.flag.setAll('body.moves', false);
+
+
 
         //this.platforms.setAll('body.velocity.x', -X_GAMESPEED);
         //this.flag.setAll('body.velocity.x', -X_GAMESPEED);
@@ -168,7 +175,7 @@ Main.prototype = {
         game.physics.arcade.collide(this.spikes, this.platforms);
 
         game.physics.arcade.collide(this.flag, this.floor);
-        game.physics.arcade.collide(this.flag, this.player, this.victory, null, this);
+        game.physics.arcade.collide(this.player, this.flag, this.victory, null, this);
 
         // Collide player with spikes, and call die function
         game.physics.arcade.collide(this.player, this.spikes, this.die, null, this);
@@ -178,7 +185,7 @@ Main.prototype = {
         }
 
         // If player gets stopped, set speed back to default
-        if (this.player.body.velocity.x < 500 && !DEBUG_MODE) {
+        if (this.player.body.velocity.x < 500 && !DEBUG_MODE && !victoryFlag) {
             this.player.body.velocity.x = 500;
         } else if (this.player.y > game.world.height + 500) {
             this.die();
@@ -380,12 +387,15 @@ Main.prototype = {
         }
     },
 
-    placeFlag: function(seconds, y) {
+    placeFlag: function(seconds) {
         var x = seconds * X_GAMESPEED;
-        this.flag.create(x, y, 'flagpole');
+        this.flag.create(x, 255, 'flagpole');
     },
 
     victory: function() {
+        console.log('Victory!');
+        victoryFlag = true;
+
         this.player.body.velocity.x = 0;
 
         // Display win message, go to next level

@@ -36,6 +36,6 @@ var Level1 = {
 
         // END OF LEVEL
         this.createFloor(32, 3);
-        this.placeFlag(32.5, 200);
+        this.placeFlag(32.5);
     }
 };
