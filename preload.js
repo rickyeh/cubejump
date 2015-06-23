@@ -5,17 +5,17 @@ var Preload = function(game) {
 
 Preload.prototype = {
     preload: function() {
-        this.game.load.image('platform', 'assets/platform.png');
-        this.game.load.image('brick', 'assets/brick.png');
-        this.game.load.image('ground', 'assets/platform.png');
-        this.game.load.image('ninja', 'assets/ninja.png');
-        this.game.load.image('spike', 'assets/spikeO.png');
-        this.game.load.image('coin', 'assets/coin.png');
-        this.game.load.image('grass', 'assets/grass.png');
-        this.game.load.image('title', 'assets/title.png');
-        this.game.load.image('playButton', 'assets/playButton.png');
-        this.game.load.image('endlessButton', 'assets/endlessButton.png');
-        this.game.load.image('flagpole', 'assets/flagpole.png');
+        game.load.image('platform', 'assets/platform.png');
+        game.load.image('brick', 'assets/brick.png');
+        game.load.image('ground', 'assets/platform.png');
+        game.load.image('ninja', 'assets/ninja.png');
+        game.load.image('spike', 'assets/spikeO.png');
+        game.load.image('coin', 'assets/coin.png');
+        game.load.image('grass', 'assets/grass.png');
+        game.load.image('title', 'assets/title.png');
+        game.load.image('playButton', 'assets/playButton.png');
+        game.load.image('endlessButton', 'assets/endlessButton.png');
+        game.load.image('flagpole', 'assets/flagpole.png');
 
         this.load.audio('jump', 'assets/jump.wav');
         this.load.audio('coin', 'assets/coin.wav');
@@ -24,6 +24,6 @@ Preload.prototype = {
         this.load.audio('music', ['assets/music_5th.mp3']);
     },
     create: function() {
-        this.game.state.start('Title');
+        game.state.start('Title');
     }
 };
