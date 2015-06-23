@@ -1,9 +1,8 @@
 var X_GAMESPEED = 500; // pixels per second
-var MUTE = true;
 var DEBUG_MODE = true;
 
 var Main = function(game) {
-    console.log('main state called');
+    console.log('Main State Loaded');
 
     this.jumpCount = 0;
     this.score = 0;
@@ -30,34 +29,32 @@ Main.prototype = {
         this.player.body.collideWorldBounds = false;
         this.player.body.velocity.x = X_GAMESPEED;
 
-        // game.camera.follow(this.player);
-
-
         // Added mouse / touch functionality for jumping
         this.input.onDown.add(this.onMouseOrTouch, this);
 
         var keyboard = game.input.keyboard;
-        
+
         // Add scroll buttons for level editor
         this.cursors = keyboard.createCursorKeys();
 
         keyboard.addKey(Phaser.Keyboard.UP).onDown.add(this.jump, this);
 
-
-        keyboard.addKey(Phaser.Keyboard.A).onDown.add(this.brickToggle, this);
-        keyboard.addKey(Phaser.Keyboard.S).onDown.add(this.spikeToggle, this);
-        keyboard.addKey(Phaser.Keyboard.D).onDown.add(this.coinToggle, this);
-        keyboard.addKey(Phaser.Keyboard.F).onDown.add(this.floorToggle, this);
-        keyboard.addKey(Phaser.Keyboard.SPACEBAR).onDown.add(this.placeItem, this);
-        keyboard.addKey(Phaser.Keyboard.ONE).onDown.add(this.oneSwitch, this);
-        keyboard.addKey(Phaser.Keyboard.TWO).onDown.add(this.twoSwitch, this);
-        keyboard.addKey(Phaser.Keyboard.THREE).onDown.add(this.threeSwitch, this);
-        keyboard.addKey(Phaser.Keyboard.FOUR).onDown.add(this.fourSwitch, this);
-        keyboard.addKey(Phaser.Keyboard.FIVE).onDown.add(this.fiveSwitch, this);
-        keyboard.addKey(Phaser.Keyboard.SIX).onDown.add(this.sixSwitch, this);
-        keyboard.addKey(Phaser.Keyboard.SEVEN).onDown.add(this.sevenSwitch, this);
-        keyboard.addKey(Phaser.Keyboard.EIGHT).onDown.add(this.eightSwitch, this);
-        keyboard.addKey(Phaser.Keyboard.NINE).onDown.add(this.nineSwitch, this);
+        if (DEBUG_MODE) {
+            keyboard.addKey(Phaser.Keyboard.A).onDown.add(this.brickToggle, this);
+            keyboard.addKey(Phaser.Keyboard.S).onDown.add(this.spikeToggle, this);
+            keyboard.addKey(Phaser.Keyboard.D).onDown.add(this.coinToggle, this);
+            keyboard.addKey(Phaser.Keyboard.F).onDown.add(this.floorToggle, this);
+            keyboard.addKey(Phaser.Keyboard.SPACEBAR).onDown.add(this.placeItem, this);
+            keyboard.addKey(Phaser.Keyboard.ONE).onDown.add(this.oneSwitch, this);
+            keyboard.addKey(Phaser.Keyboard.TWO).onDown.add(this.twoSwitch, this);
+            keyboard.addKey(Phaser.Keyboard.THREE).onDown.add(this.threeSwitch, this);
+            keyboard.addKey(Phaser.Keyboard.FOUR).onDown.add(this.fourSwitch, this);
+            keyboard.addKey(Phaser.Keyboard.FIVE).onDown.add(this.fiveSwitch, this);
+            keyboard.addKey(Phaser.Keyboard.SIX).onDown.add(this.sixSwitch, this);
+            keyboard.addKey(Phaser.Keyboard.SEVEN).onDown.add(this.sevenSwitch, this);
+            keyboard.addKey(Phaser.Keyboard.EIGHT).onDown.add(this.eightSwitch, this);
+            keyboard.addKey(Phaser.Keyboard.NINE).onDown.add(this.nineSwitch, this);
+        }
 
 
         // Initialize Physics for obstacles
@@ -82,6 +79,8 @@ Main.prototype = {
         if (DEBUG_MODE) {
             this.player.body.velocity.x = 0;
 
+            game.add.text(50, 50, 'DEBUG MODE').fixedToCamera = true;
+
             this.xText = game.add.text(1165, 50, 'X Secs: ', {
                 fontSize: '20px',
                 fill: '#000'
@@ -103,8 +102,6 @@ Main.prototype = {
             this.yText.fixedToCamera = true;
             this.qtyText.fixedToCamera = true;
             this.blockText.fixedToCamera = true;
-
-
         }
 
 
@@ -113,7 +110,7 @@ Main.prototype = {
         this.deathSound = game.add.audio('death');
         this.jumpSound = game.add.audio('jump');
 
-        if (!this.music && !MUTE) {
+        if (!this.music && !DEBUG_MODE) {
             this.music = game.add.audio('music');
             this.music.loopFull();
         }
@@ -126,14 +123,15 @@ Main.prototype = {
             case 1:
                 Level1.start.call(this); // bind the 'this' argument to Main
                 break;
+            case 2:
+                Level2.start.call(this);
+                break;
+            case 3:
+                // Level3.start.call(this);
             default:
                 this.startEndless();
                 break;
         }
-
-
-        // DEBUG. Make the world faster! (or slower)
-        //X_GAMESPEED = 0;
 
         this.platforms.setAll('body.allowGravity', false);
         this.platforms.setAll('body.immovable', true);
@@ -178,8 +176,8 @@ Main.prototype = {
         }
 
         // If player gets stopped, set speed back to default
-        if (this.player.body.velocity.x < 500  && !DEBUG_MODE) {
-             this.player.body.velocity.x = 500;
+        if (this.player.body.velocity.x < 500 && !DEBUG_MODE) {
+            this.player.body.velocity.x = 500;
         } else if (this.player.y > game.world.height + 500) {
             this.die();
         }
@@ -200,37 +198,42 @@ Main.prototype = {
 
         //  In debug, display X, Y, Qty, Type for level editing
         if (DEBUG_MODE) {
-            this.xText.text = 'X Secs : ' + (game.camera.x + game.input.x)/500;
+            this.xText.text = 'X Secs : ' + (game.camera.x + game.input.x) / 500;
             this.yText.text = 'Y : ' + game.input.y;
             this.qtyText.text = 'Qty : ' + this.quantity;
             this.blockText.text = 'Type: ' + this.blockType;
         }
     },
 
-    onMouseOrTouch : function() {
-        var itemX = (game.camera.x + game.input.x)/500;
-        var itemY = game.input.y;
+    onMouseOrTouch: function() {
 
-        switch (this.blockType) {
-            case 1:
-                console.log('this.createBrick('+ itemX +', ' + itemY + ', ' + this.quantity +');');
-                this.createBrick(itemX, itemY, this.quantity);
-                break;
-            case 2:
-                console.log('this.createSpike('+ itemX +', ' + itemY + ', ' + this.quantity +');');
-                this.createSpike(itemX, itemY, this.quantity);
-                break;
-            case 3:
-                console.log('this.createCoin('+ itemX +', ' + itemY + ', ' + this.quantity +');');
-                this.createCoin(itemX, itemY, this.quantity);
-                break;
-            case 4:
-                console.log('this.createFloor('+ itemX +', ' + itemY + ', ' + this.quantity +');');
-                this.createFloor(itemX, this.quantity);
-                break;
+        if (DEBUG_MODE) {
+
+            var itemX = (game.camera.x + game.input.x) / 500;
+            var itemY = game.input.y;
+
+            switch (this.blockType) {
+                case 1:
+                    console.log('this.createBrick(' + itemX + ', ' + itemY + ', ' + this.quantity + ');');
+                    this.createBrick(itemX, itemY, this.quantity);
+                    break;
+                case 2:
+                    console.log('this.createSpike(' + itemX + ', ' + itemY + ', ' + this.quantity + ');');
+                    this.createSpike(itemX, itemY, this.quantity);
+                    break;
+                case 3:
+                    console.log('this.createCoin(' + itemX + ', ' + itemY + ', ' + this.quantity + ');');
+                    this.createCoin(itemX, itemY, this.quantity);
+                    break;
+                case 4:
+                    console.log('this.createFloor(' + itemX + ', ' + itemY + ', ' + this.quantity + ');');
+                    this.createFloor(itemX, this.quantity);
+                    break;
+            }
+        } else {
+            this.jump();
         }
-        
-        // this.jump();
+
     },
 
     jump: function() {
@@ -383,11 +386,9 @@ Main.prototype = {
     },
 
     victory: function() {
-        this.platforms.setAll('body.velocity.x', 0);
-        this.floor.setAll('body.velocity.x', 0);
-        this.spikes.setAll('body.velocity.x', 0);
-        this.coins.setAll('body.velocity.x', 0);
-        this.flag.setAll('body.velocity.x', 0);
+        this.player.body.velocity.x = 0;
+
+        // Display win message, go to next level
     },
 
     brickToggle: function() {
