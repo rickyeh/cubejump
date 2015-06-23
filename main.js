@@ -28,6 +28,10 @@ Main.prototype = {
         game.physics.arcade.enable(this.player);
         this.player.body.gravity.y = 4000;
         this.player.body.collideWorldBounds = false;
+        this.player.body.velocity.x = X_GAMESPEED;
+
+        // game.camera.follow(this.player);
+
 
         // Added mouse / touch functionality for jumping
         this.input.onDown.add(this.onMouseOrTouch, this);
@@ -76,6 +80,8 @@ Main.prototype = {
         this.scoreText.fixedToCamera = true;
 
         if (DEBUG_MODE) {
+            this.player.body.velocity.x = 0;
+
             this.xText = game.add.text(1165, 50, 'X Secs: ', {
                 fontSize: '20px',
                 fill: '#000'
@@ -140,6 +146,7 @@ Main.prototype = {
         this.spikes.setAll('body.gravity.y', 4000);
         this.flag.setAll('body.immovable', false);
         this.flag.setAll('body.gravity.y', 4000);
+
         //this.platforms.setAll('body.velocity.x', -X_GAMESPEED);
         //this.flag.setAll('body.velocity.x', -X_GAMESPEED);
         //this.coins.setAll('body.velocity.x', -X_GAMESPEED);
@@ -148,8 +155,10 @@ Main.prototype = {
     },
 
     update: function() {
-
-        this.player.body.velocity.x = 0;
+        // Camera to follow player with offset
+        if (!DEBUG_MODE) {
+            game.camera.focusOnXY(this.player.x + 400, this.player.y);
+        }
 
         // Collide player with floor (or the ground)
         game.physics.arcade.collide(this.player, this.floor);
@@ -168,12 +177,10 @@ Main.prototype = {
             this.jumpCount = 0;
         }
 
-        // If player gets pushed back, slowly move cube back to starting position.
-        if (this.player.x < 0) {
-            this.die();
-        } else if (this.player.x < 100 && this.player.body.velocity.x === 0) {
-            this.player.body.velocity.x = 10;
-        } else if (this.player.y > game.world.height + 1000) {
+        // If player gets stopped, set speed back to default
+        if (this.player.body.velocity.x < 500  && !DEBUG_MODE) {
+             this.player.body.velocity.x = 500;
+        } else if (this.player.y > game.world.height + 500) {
             this.die();
         }
 
