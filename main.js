@@ -9,10 +9,14 @@ var Main = function(game) {
     this.jumpCount = 0;
     this.score = 0;
     this.scoreText = '';
+    this.lastScoreText = '';
+    this.bestScoreText = '';
     this.timerText = '';
     this.blockType = 1; // 1 = brick, 2: spike, 3: coin, 4: floor
     this.quantity = 1;
     this.secondsElapsed = 0;
+    this.lastScore = 0;
+    this.bestScore = 0;
 };
 
 Main.prototype = {
@@ -76,36 +80,53 @@ Main.prototype = {
         this.coins.enableBody = true;
 
         // Initialize Scoreboard
-        this.scoreText = game.add.text(1165, 16, 'Score: 0', {
-            fontSize: '32px',
+        // this.scoreText = game.add.text(1165, 16, 'Score: 0', {
+        //     fontSize: '32px',
+        //     fill: '#000'
+        // });
+        if(localStorage.getItem(stageSelect) !== null) {
+            this.bestScore = localStorage.getItem(stageSelect);
+        }
+        this.bestScoreText = game.add.text(1165, 60, 'Best: ' + this.bestScore, {
+            fontSize: '20px',
             fill: '#000'
         });
-        this.scoreText.fixedToCamera = true;
+        this.lastScoreText = game.add.text(1165, 84, 'Last: ' + this.lastScore, {
+            fontSize: '20px',
+            fill: '#000'
+        });
 
-        this.timerText = game.add.text(600, 16, 'Time: 0', {
+        this.scoreText.fixedToCamera = true;
+        this.bestScoreText.fixedToCamera = true;
+        this.lastScoreText.fixedToCamera = true;
+
+        // Initialize Timer
+        this.timerText = game.add.text(1165, 16, 'Time: 0', {
             fontSize: '32px',
             fill: '#000'
         });
+
+
         this.timerText.fixedToCamera = true;
 
         if (DEBUG_MODE) {
             this.player.body.velocity.x = 0;
 
-            game.add.text(50, 50, 'DEBUG MODE').fixedToCamera = true;
+            game.add.text(50, 10, 'DEBUG MODE').fixedToCamera = true;
 
-            this.xText = game.add.text(1165, 50, 'X Secs: ', {
+            this.xText = game.add.text(50, 50, 'X Secs: ', {
                 fontSize: '20px',
                 fill: '#000'
             });
-            this.yText = game.add.text(1165, 70, 'Y: 0' + this.yPos, {
+            this.yText = game.add.text(50, 70, 'Y: 0' + this.yPos, {
                 fontSize: '20px',
                 fill: '#000'
             });
-            this.qtyText = game.add.text(1165, 90, 'Qty: 0' + this.quantity, {
+            this.qtyText = game.add.text(50, 90, 'Qty: 0' + this.quantity, {
                 fontSize: '20px',
                 fill: '#000'
             });
-            this.blockText = game.add.text(1165, 110, 'Type: ' + this.blockType, {
+            this.blockText = game.add.text(50, 110, 'Type: ' + this.blockType, {
                 fontSize: '20px',
                 fill: '#000'
             });
@@ -276,6 +297,10 @@ Main.prototype = {
 
     die: function() {
         console.log('Player has died');
+        this.lastScore = this.secondsElapsed;
+        if (this.lastScore > this.bestScore) {
+            localStorage.setItem(stageSelect, this.lastScore);
+        }
         this.deathSound.play();
         this.resetGame();
     },
