@@ -1,33 +1,34 @@
 var X_GAMESPEED = 500; // pixels per second
-var DEBUG_MODE = true;
-var victoryFlag = false;
-var endlessMode = false;
+var DEBUG_MODE = true; 
+var victoryFlag = false; // Flag to keep track of victory on level
+var endlessMode = false; // Flag to toggle endless mode differences
 
 var Main = function(game) {
     console.log('Main State Loaded');
 
-    this.jumpCount = 0;
+    this.jumpCount = 0; // Tracks current amount of jumps, for double jumping
     this.score = 0;
     this.scoreText = '';
-    this.lastScoreText = '';
-    this.bestScoreText = '';
-    this.timerText = '';
+    this.lastScoreText = ''; // Text display for last score
+    this.bestScoreText = ''; // Text display for best score
+    this.timerText = ''; // Text display for the timer
     this.blockType = 1; // 1 = brick, 2: spike, 3: coin, 4: floor
-    this.quantity = 1;
-    this.secondsElapsed = 0;
-    this.lastScore = 0;
-    this.bestScore = 0;
+    this.quantity = 1; // Quantity for the level editor
+    this.secondsElapsed = 0; // Keeps track of the seconds elapsed on a level
+    this.lastScore = 0; // Variable that stores the last score for display
+    this.bestScore = 0; // Variable that stores / retrieves the best score from localStorage
 };
 
 Main.prototype = {
 
     create: function() {
+        // Bounds of the world defined
         game.world.setBounds(0, 0, 35000, 750);
 
-        // Set background color, start physics engine
+        // Start physics engine
         game.physics.startSystem(Phaser.Physics.ARCADE);
 
-        // Add the player to the game
+        // Add the player to the game, set its anchor
         this.player = game.add.sprite(100, game.world.height - 150, 'ninja');
         this.player.anchor.setTo(0.4);
 
@@ -37,10 +38,13 @@ Main.prototype = {
         this.player.body.collideWorldBounds = false;
         this.player.body.velocity.x = X_GAMESPEED;
 
+        // INPUT
+
         // Added mouse / touch functionality for jumping
+        var keyboard = game.input.keyboard;  // local variable for convenience
+
         this.input.onDown.add(this.onMouseOrTouch, this);
 
-        var keyboard = game.input.keyboard;
 
         // Add scroll buttons for level editor
         this.cursors = keyboard.createCursorKeys();
