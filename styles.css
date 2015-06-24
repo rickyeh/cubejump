@@ -1,0 +1,10 @@
+body {
+    background-color: #222;
+}
+
+#gameScreen {
+    width: 1334px;
+    height: 750px;
+    margin-left: auto;
+    margin-right: auto;
+}
