@@ -16,6 +16,7 @@ Preload.prototype = {
         game.load.image('playButton', 'assets/playButton.png');
         game.load.image('endlessButton', 'assets/endlessButton.png');
         game.load.image('flagpole', 'assets/flagpole.png');
+        game.load.image('banner', 'assets/banner.png');
 
         this.load.audio('jump', 'assets/jump.wav');
         this.load.audio('coin', 'assets/coin.wav');
