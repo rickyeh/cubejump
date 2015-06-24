@@ -1,6 +1,7 @@
 var X_GAMESPEED = 500; // pixels per second
 var DEBUG_MODE = true;
 var victoryFlag = false;
+var endlessMode = false;
 
 var Main = function(game) {
     console.log('Main State Loaded');
@@ -8,8 +9,10 @@ var Main = function(game) {
     this.jumpCount = 0;
     this.score = 0;
     this.scoreText = '';
+    this.timerText = '';
     this.blockType = 1; // 1 = brick, 2: spike, 3: coin, 4: floor
     this.quantity = 1;
+    this.secondsElapsed = 0;
 };
 
 Main.prototype = {
@@ -79,6 +82,12 @@ Main.prototype = {
         });
         this.scoreText.fixedToCamera = true;
 
+        this.timerText = game.add.text(600, 16, 'Time: 0', {
+            fontSize: '32px',
+            fill: '#000'
+        });
+        this.timerText.fixedToCamera = true;
+
         if (DEBUG_MODE) {
             this.player.body.velocity.x = 0;
 
@@ -121,7 +130,8 @@ Main.prototype = {
         // Create the world objects depending on stage selected
         switch (stageSelect) {
             case 0:
-                this.startEndless();
+                endlessMode = true;
+                EndlessLevel.start.call(this);
                 break;
             case 1:
                 Level1.start.call(this); // bind the 'this' argument to Main
@@ -133,7 +143,7 @@ Main.prototype = {
                 // Level3.start.call(this);
                 break;
             default:
-                this.startEndless();
+                EndlessLevel.start.call(this);
                 break;
         }
 
@@ -152,13 +162,15 @@ Main.prototype = {
         this.flag.setAll('body.gravity.y', 4000);
         this.flag.setAll('body.moves', false);
 
+        if (endlessMode && !DEBUG_MODE) {
+            this.player.body.acceleration.x = 10; 
+        }
 
-
-        //this.platforms.setAll('body.velocity.x', -X_GAMESPEED);
-        //this.flag.setAll('body.velocity.x', -X_GAMESPEED);
-        //this.coins.setAll('body.velocity.x', -X_GAMESPEED);
-        //this.spikes.setAll('body.velocity.x', -X_GAMESPEED);
-        //this.floor.setAll('body.velocity.x', -X_GAMESPEED);
+        if (!DEBUG_MODE) {
+            this.timer = this.game.time.create();
+            this.timer.loop(1000, this.updateTimer, this);
+            this.timer.start();
+        }
     },
 
     update: function() {
@@ -184,9 +196,13 @@ Main.prototype = {
             this.jumpCount = 0;
         }
 
-        // If player gets stopped, set speed back to default
+        // If player gets stopped by brick
         if (this.player.body.velocity.x < 500 && !DEBUG_MODE && !victoryFlag) {
-            this.player.body.velocity.x = 500;
+            if (endlessMode) { // Endless mode, uses current x position to recalculate approx speed
+                this.player.body.velocity.x = X_GAMESPEED + (this.player.body.x / (X_GAMESPEED/10));
+            } else { // Normal mode sets player speed back to default.
+                this.player.body.velocity.x = X_GAMESPEED;
+            }
         } else if (this.player.y > game.world.height + 500) {
             this.die();
         }
@@ -266,62 +282,8 @@ Main.prototype = {
 
     resetGame: function() {
         this.score = 0;
+        this.secondsElapsed = 0;
         game.state.start('Main');
-    },
-
-    createRandomGround: function(numOfGround) {
-        var x = 0;
-        var gap = 0;
-
-        // Creates the ground
-        for (var i = 0; i < numOfGround; i++) {
-            this.floor.create(x + gap, game.world.height - 112, 'grass');
-            x += 1328 + gap;
-            gap = game.rnd.integerInRange(100, 350);
-        }
-    },
-
-    createRandomPlatforms: function(numOfPlatforms) {
-        var gap = 500;
-        var x = 500;
-        var platformCount = 0;
-
-        this.platforms.create(450, 450, 'platform');
-
-        while (platformCount < numOfPlatforms) {
-            this.platforms.create(x + gap, game.rnd.integerInRange(200, 450), 'platform');
-            platformCount++;
-            x += gap;
-            gap = game.rnd.integerInRange(450, 800);
-        }
-    },
-
-    createRandomSpikes: function(numOfSpikes) {
-        var x = 600;
-        var y = 605;
-        var spikeCount = 0;
-        var gap = 0;
-
-        while (spikeCount < numOfSpikes) {
-            this.spikes.create(x + gap, y, 'spike');
-            x += gap;
-            gap = game.rnd.integerInRange(100, 600);
-            spikeCount++;
-        }
-    },
-
-    createRandomCoins: function(numOfCoins) {
-        var x = 500;
-        var y = 100;
-        var gap = 0;
-
-        for (var i = 0; i < numOfCoins; i++) {
-            this.coins.create(x + gap, y, 'coin');
-
-            x += gap;
-            gap = game.rnd.integerInRange(200, 500);
-        }
-        this.coins.setAll('body.gravity.y', 4000);
     },
 
     collectCoin: function(player, coin) {
@@ -331,13 +293,6 @@ Main.prototype = {
         // Add and update the score
         this.score += 1;
         this.scoreText.text = 'Score: ' + this.score;
-    },
-
-    startEndless: function() {
-        this.createRandomGround(20);
-        this.createRandomPlatforms(40);
-        this.createRandomSpikes(80);
-        this.createRandomCoins(70);
     },
 
     createBrick: function(seconds, y, length) {
@@ -400,6 +355,12 @@ Main.prototype = {
 
         // Display win message, go to next level
     },
+
+    updateTimer: function() {
+        this.secondsElapsed++;
+        this.timerText.text = 'Time: ' + this.secondsElapsed;
+    },
+
     debugToggle: function() {
         if (DEBUG_MODE) {
             console.log('Debug Mode : OFF');
