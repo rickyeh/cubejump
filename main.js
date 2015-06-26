@@ -1,5 +1,5 @@
 var X_GAMESPEED = 500; // pixels per second
-var DEBUG_MODE = true; 
+var DEBUG_MODE = false; 
 var victoryFlag = false; // Flag to keep track of victory on level
 var endlessMode = false; // Flag to toggle endless mode differences
 
@@ -11,6 +11,7 @@ var Main = function(game) {
     this.scoreText = '';
     this.lastScoreText = ''; // Text display for last score
     this.bestScoreText = ''; // Text display for best score
+    this.timer;
     this.timerText = ''; // Text display for the timer
     this.blockType = 1; // 1 = brick, 2: spike, 3: coin, 4: floor
     this.quantity = 1; // Quantity for the level editor
@@ -199,6 +200,10 @@ Main.prototype = {
     },
 
     update: function() {
+        var start = new Date().getTime();  // TIME TESTING
+
+
+
         // Camera to follow player with offset
         if (!DEBUG_MODE) {
             game.camera.focusOnXY(this.player.x + 400, this.player.y);
@@ -251,6 +256,11 @@ Main.prototype = {
             this.qtyText.text = 'Qty : ' + this.quantity;
             this.blockText.text = 'Type: ' + this.blockType;
         }
+
+        // TIME TESTING
+        var end = new Date().getTime();
+        var time = end - start;
+        console.log(time);
     },
 
     onMouseOrTouch: function() {
@@ -373,7 +383,7 @@ Main.prototype = {
 
     placeFlag: function(seconds) {
         var x = seconds * X_GAMESPEED;
-        this.flag.create(x, 255, 'flagpole');
+        this.flag.create(x, 256, 'flagpole');
     },
 
     victory: function() {
@@ -381,6 +391,7 @@ Main.prototype = {
         victoryFlag = true;
 
         this.player.body.velocity.x = 0;
+        this.timer.stop();
 
         // Display win message, go to next level
     },
