@@ -1,7 +1,12 @@
 var X_GAMESPEED = 500; // pixels per second
+var ACCELERATION_FACTOR = 10 / X_GAMESPEED;
 var DEBUG_MODE = false; 
 var victoryFlag = false; // Flag to keep track of victory on level
 var endlessMode = false; // Flag to toggle endless mode differences
+var start;
+var end;
+var totalTime = 0;
+var loopCount = 0;
 
 var Main = function(game) {
     console.log('Main State Loaded');
@@ -23,6 +28,8 @@ var Main = function(game) {
 Main.prototype = {
 
     create: function() {
+        game.time.advancedTiming = false;
+
         // Bounds of the world defined
         game.world.setBounds(0, 0, 35000, 750);
 
@@ -197,57 +204,18 @@ Main.prototype = {
             this.timer.loop(1000, this.updateTimer, this);
             this.timer.start();
         }
+
     },
 
     update: function() {
-        var start = new Date().getTime();  // TIME TESTING
 
-
-
-        // Camera to follow player with offset
-        if (!DEBUG_MODE) {
-            game.camera.focusOnXY(this.player.x + 400, this.player.y);
-        }
-
-        // Collide player with floor (or the ground)
-        game.physics.arcade.collide(this.player, this.floor);
-        game.physics.arcade.collide(this.player, this.platforms);
-
-        game.physics.arcade.collide(this.spikes, this.floor);
-        game.physics.arcade.collide(this.spikes, this.platforms);
-
-        game.physics.arcade.collide(this.flag, this.floor);
-        game.physics.arcade.collide(this.player, this.flag, this.victory, null, this);
-
-        // Collide player with spikes, and call die function
-        game.physics.arcade.collide(this.player, this.spikes, this.die, null, this);
-
-        if (this.player.body.touching.down && this.jumpCount > 0) {
-            this.jumpCount = 0;
-        }
-
-        // If player gets stopped by brick
-        if (this.player.body.velocity.x < 500 && !DEBUG_MODE && !victoryFlag) {
-            if (endlessMode) { // Endless mode, uses current x position to recalculate approx speed
-                this.player.body.velocity.x = X_GAMESPEED + (this.player.body.x / (X_GAMESPEED/10));
-            } else { // Normal mode sets player speed back to default.
-                this.player.body.velocity.x = X_GAMESPEED;
-            }
-        } else if (this.player.y > game.world.height + 500) {
-            this.die();
-        }
-
-        // Collision for coins
-        game.physics.arcade.collide(this.coins, this.platforms);
-        game.physics.arcade.collide(this.coins, this.floor);
-        game.physics.arcade.overlap(this.player, this.coins, this.collectCoin, null, this);
-
-        // Scrolling keybinds for level editor
-        if (this.cursors.left.isDown) {
-            game.camera.x -= 50;
-        } else if (this.cursors.right.isDown) {
-            game.camera.x += 50;
-        }
+        var arcade = game.physics.arcade;
+        var player = this.player;
+        var playerBody = player.body;
+        var coins = this.coins;
+        var spikes = this.spikes;
+        var floor = this.floor;
+        var platforms = this.platforms;
 
         //  In debug, display X, Y, Qty, Type for level editing
         if (DEBUG_MODE) {
@@ -255,12 +223,49 @@ Main.prototype = {
             this.yText.text = 'Y : ' + game.input.y;
             this.qtyText.text = 'Qty : ' + this.quantity;
             this.blockText.text = 'Type: ' + this.blockType;
+
+            // Scrolling keybinds for level editor
+            if (this.cursors.left.isDown) {
+                game.camera.x -= 50;
+            } else if (this.cursors.right.isDown) {
+                game.camera.x += 50;
+            }
+        } else { // Camera to follow player with offset
+            game.camera.focusOnXY(player.x + 400, player.y);
+
+            // If player gets stopped by brick
+            if (playerBody.velocity.x < 500 && !victoryFlag) {
+                if (endlessMode) { // Endless mode, uses current x position to recalculate approx speed
+                    playerBody.velocity.x = X_GAMESPEED + (playerBody.x * ACCELERATION_FACTOR);
+                } else { // Normal mode sets player speed back to default.
+                    playerBody.velocity.x = X_GAMESPEED;
+                }
+            } else if (player.y > game.world.height + 500) {
+                this.die();
+            }
         }
 
-        // TIME TESTING
-        var end = new Date().getTime();
-        var time = end - start;
-        console.log(time);
+        // Collide player with world objects
+        arcade.collide(player, floor);
+        arcade.collide(player, platforms);
+        arcade.collide(player, this.flag, this.victory, null, this);
+        arcade.collide(player, spikes, this.die, null, this);
+        arcade.overlap(player, coins, this.collectCoin, null, this);
+
+        arcade.collide(spikes, floor);
+        arcade.collide(spikes, platforms);
+
+        // Collision for coins
+        arcade.collide(coins, platforms);
+        arcade.collide(coins, floor);
+
+        // Check for player touching an object on bottom, reset jump counter
+        if (playerBody.touching.down) {
+            this.jumpCount = 0;
+        }
+
+        // Debugging FPS display
+        //console.log(game.time.fps);
     },
 
     onMouseOrTouch: function() {
