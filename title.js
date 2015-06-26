@@ -14,7 +14,7 @@ Title.prototype = {
         this.title.anchor.set(0.5);
 
         // Add animating cube
-        this.cube = this.game.add.sprite(this.game.world.centerX - 60, this.game.world.centerY - 55, 'ninja');
+        this.cube = this.game.add.sprite(this.game.world.centerX - 63, this.game.world.centerY - 55, 'ninja');
         this.cube.anchor.set(0.5);
 
         // Add tween animation to the cube
