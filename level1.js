@@ -37,5 +37,34 @@ var Level1 = {
         // END OF LEVEL
         this.createFloor(32, 3);
         this.placeFlag(32.5);
+
+        // Coins
+        this.createCoin(2.03, 500, 1);
+        this.createCoin(4.10, 450, 1);
+        this.createCoin(6.17, 450, 1);
+        this.createCoin(8.15, 470, 1);
+        this.createCoin(8.32, 430, 1);
+        this.createCoin(10.10, 640, 1);
+        this.createCoin(10.6, 640, 1);
+        this.createCoin(12.35, 400, 1);
+        this.createCoin(15.6, 400, 1);
+        this.createCoin(15.84, 400, 1);
+        this.createCoin(19.08, 400, 1);
+        this.createCoin(20.505, 500, 1);
+        this.createCoin(21.13, 500, 1);
+        this.createCoin(21.81, 500, 1);
+        this.createCoin(22.85, 605, 1);
+        this.createCoin(24.6, 240, 1);
+        this.createCoin(25.0, 240, 1);
+        this.createCoin(26.34, 605, 6);
+        this.createCoin(28.87, 370, 1);
+        this.createCoin(29.10, 270, 1);
+
+        this.createCoin(29.7, 270, 1);
+        this.createCoin(29.84, 200, 1);
+        this.createCoin(30.37, 170, 1);
+        this.createCoin(30.54, 100, 1);
+
+        this.createCoin(32.01, 605, 5);
     }
 };
