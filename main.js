@@ -254,8 +254,8 @@ Main.prototype = {
         }
 
         // Collide player with world objects
-        arcade.collide(player, floor);
-        arcade.collide(player, platforms);
+        arcade.collide(player, floor, this.resetJump, null, this);
+        arcade.collide(player, platforms, this.resetJump, null, this);
         arcade.collide(player, this.flag, this.victory, null, this);
         arcade.collide(player, spikes, this.die, null, this);
         arcade.overlap(player, coins, this.collectCoin, null, this);
@@ -266,11 +266,6 @@ Main.prototype = {
         // Collision for coins
         arcade.collide(coins, platforms);
         arcade.collide(coins, floor);
-
-        // Check for player touching an object on bottom, reset jump counter
-        if (playerBody.touching.down) {
-            this.jumpCount = 0;
-        }
 
         // Debugging FPS display
         //console.log(game.time.fps);
@@ -308,6 +303,7 @@ Main.prototype = {
     },
 
     jump: function() {
+
         if (this.jumpCount === 0) {
             this.jumpSound.play(); // play sound on first jump
         }
@@ -319,6 +315,13 @@ Main.prototype = {
             game.add.tween(this.player).to({
                 angle: 360
             }, 400, Phaser.Easing.Linear.None, true);
+        }
+    },
+
+    resetJump: function() {
+
+        if (this.jumpCount > 0) {
+            this.jumpCount = 0;
         }
     },
 
@@ -419,8 +422,9 @@ Main.prototype = {
 
             // Congratulatory text
             this.victoryText = game.add.text(game.width/2, this.game.world.centerY - 100, 'Level Complete!', {
+                font: 'Aldrich',
                 fontSize: '64px',
-                fill: '#DDD'
+                fill: '#333'
             });
             this.victoryText.fixedToCamera = true;
             this.victoryText.anchor.setTo(0.5);
