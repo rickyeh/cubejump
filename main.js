@@ -16,14 +16,14 @@ var Main = function(game) {
     this.scoreText = '';
     this.lastScoreText = ''; // Text display for last score
     this.bestScoreText = ''; // Text display for best score
-    this.timer;
+    this.timer = null;
     this.timerText = ''; // Text display for the timer
     this.blockType = 1; // 1 = brick, 2: spike, 3: coin, 4: floor
     this.quantity = 1; // Quantity for the level editor
     this.secondsElapsed = 0; // Keeps track of the seconds elapsed on a level
     this.lastScore = 0; // Variable that stores the last score for display
     this.bestScore = 0; // Variable that stores / retrieves the best score from localStorage
-    this.banner; // Variable to store the flag's banner
+    this.banner = null; // Variable to store the flag's banner
 };
 
 Main.prototype = {
@@ -102,10 +102,12 @@ Main.prototype = {
             this.bestScore = localStorage.getItem(stageSelect);
         }
         this.bestScoreText = game.add.text(1165, 60, 'Best: ' + this.bestScore, {
+            font: 'Aldrich',
             fontSize: '20px',
             fill: '#000'
         });
         this.lastScoreText = game.add.text(1165, 84, 'Last: ' + this.lastScore, {
+            font: 'Aldrich',
             fontSize: '20px',
             fill: '#000'
         });
@@ -116,6 +118,7 @@ Main.prototype = {
 
         // Initialize Timer
         this.timerText = game.add.text(1165, 16, 'Time: 0', {
+            font: 'Aldrich',
             fontSize: '32px',
             fill: '#000'
         });
@@ -154,8 +157,10 @@ Main.prototype = {
 
         // Iniitialize audio
         this.coinSound = game.add.audio('coin');
+        this.coinSound.volume = 0.2;
         this.deathSound = game.add.audio('death');
         this.jumpSound = game.add.audio('jump');
+        this.jumpSound.volume = 0.5;
 
         if (!this.music && !DEBUG_MODE) {
             this.music = game.add.audio('music');
@@ -225,6 +230,7 @@ Main.prototype = {
             this.yText.text = 'Y : ' + game.input.y;
             this.qtyText.text = 'Qty : ' + this.quantity;
             this.blockText.text = 'Type: ' + this.blockType;
+
 
             // Scrolling keybinds for level editor
             if (this.cursors.left.isDown) {
@@ -398,7 +404,6 @@ Main.prototype = {
     },
 
     victory: function() {
-        var jumpVar = this.jump;
 
         var playerWalkTween = function() {
             var walkTo = this.player.body.x + 200;
@@ -408,33 +413,29 @@ Main.prototype = {
                 .onComplete.add(victoryJump, this);
         };
 
-        // ** BUGGY  **  NOT FULLY WORKING
         var victoryJump = function() {
             this.victoryText = null;
             this.nextLevelButton = null;
 
             // Congratulatory text
-            this.victoryText = game.add.text(game.camera.x / 2 + 100, this.game.world.centerY - 100, 'Level Complete!', {
+            this.victoryText = game.add.text(game.width/2, this.game.world.centerY - 100, 'Level Complete!', {
                 fontSize: '64px',
                 fill: '#DDD'
             });
             this.victoryText.fixedToCamera = true;
-            this.victoryText.anchor.setTo(0.5, 0.5);
+            this.victoryText.anchor.setTo(0.5);
 
             // Sprite for the next level button
             stageSelect++;
-            this.nextLevelButton = this.game.add.button(game.camera.x/2 + 100, this.game.world.centerY + 150, 'playButton', function(){this.game.state.start('Main');} , this);
+            this.nextLevelButton = this.game.add.button(game.width/2, this.game.world.centerY + 150, 'playButton', function(){this.game.state.start('Main');} , this);
             this.nextLevelButton.fixedToCamera = true;
             this.nextLevelButton.anchor.set(0.5);
             this.nextLevelButton.scale.set(0.7);
 
-            // NOT WORKING
-            console.log('victory jump called');
             this.jump();
-            setInterval(jumpVar, 1000);
-            setInterval(this.jump, 2000);
-        };
+            game.time.events.add(Phaser.Timer.SECOND, this.jump, this);
 
+        };
 
         console.log('Victory!');
         victoryFlag = true;
@@ -446,12 +447,6 @@ Main.prototype = {
             .to({y: 575}, 1500, Phaser.Easing.Linear.In).start();
         this.bannerTween.onComplete.add(playerWalkTween, this);
 
-
-        // this.tween = this.game.add.tween(this.cube)
-        // .to({ y: 180}, 250, Phaser.Easing.Exponential.Out, false, 1500)
-        // .to({ y: 320}, 400, Phaser.Easing.Exponential.In, true).loop().start();
-
-        // Display win message, go to next level
     },
 
     updateTimer: function() {
@@ -467,6 +462,8 @@ Main.prototype = {
             console.log('Debug Mode : ON');
             DEBUG_MODE = true;
         }
+
+        this.game.state.start('Main');
     },
 
     brickToggle: function() {
