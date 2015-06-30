@@ -1,4 +1,5 @@
 var stageSelect = 1;
+var BACKGROUND_COLOR = '#87CEEB'
 
 var Title = function(game) {
     console.log('Title State Loaded');
@@ -7,7 +8,7 @@ var Title = function(game) {
 
 Title.prototype = {
     create: function() {
-        this.game.stage.backgroundColor = '#87CEEB';
+        this.game.stage.backgroundColor = BACKGROUND_COLOR;
 
         // Add title image
         this.title = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'title');
@@ -37,7 +38,19 @@ Title.prototype = {
         this.endlessButton.anchor.set(0.5);
         this.endlessButton.scale.set(0.7, 0.7);
 
+        // Has to load invisible font usage so that main can have webfont loaded instantly
+        this.preloadWebFont();
+        // game.time.events.add(Phaser.Timer.SECOND/4, this.preloadWebFont, this);
+
     },
+    preloadWebFont: function() {
+        game.add.text(1, 1, 'Hi', {
+            font: 'Aldrich',
+            fontSize: '1px',
+            fill: BACKGROUND_COLOR
+        });
+    },
+
     startNormal: function() {
         this.game.state.start('Main');
     },
