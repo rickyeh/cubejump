@@ -122,6 +122,17 @@ var Level2 = {
         this.createCoin(25.997, 500, 1);
         this.createCoin(26.565, 500, 1);
 
-        
+        this.createCoin(27.1, 430, 3);
+        this.createCoin(27.81, 300, 3);
+        this.createCoin(28.58, 200, 3);
+        this.createCoin(29.46, 130, 3);
+        this.createCoin(30.5, 250, 3);
+        this.createCoin(31.45, 250, 3);
+        this.createCoin(32.9, 240, 3);
+        this.createCoin(33.82, 310, 3);
+        this.createCoin(34.55, 220, 3);
+        this.createCoin(35.30, 180, 3);
+        this.createCoin(36.04, 110, 3);
+        this.createCoin(37.5, 250, 1);
     }
 };
