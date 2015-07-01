@@ -269,6 +269,14 @@ Main.prototype = {
 
         // Debugging FPS display
         //console.log(game.time.fps);
+
+        //console.log(game.camera.x + ' vs ' + spikes.children[0].position.x);
+
+        // var firstSpike = spikes.children[0];
+
+        // if (firstSpike && firstSpike.position.x < game.camera.x + 150) {
+        //     spikes.remove(firstSpike, false /* destroy */ , true /* silent */ );
+        // }
     },
 
     onMouseOrTouch: function() {

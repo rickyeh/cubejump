@@ -65,5 +65,63 @@ var Level2 = {
         this.createFloor(39, 5);
         
         this.placeFlag(40);
+
+        // Coin Placement
+        this.createCoin(1.92, 530, 1);
+        this.createCoin(2.07, 490, 1);
+        this.createCoin(2.22, 530, 1);
+        this.createCoin(3.06, 640, 9);
+        this.createCoin(4.33, 530, 1);
+        this.createCoin(4.47, 490, 1);
+        this.createCoin(4.61, 530, 1);
+        this.createCoin(5.08, 640, 9);
+
+        this.createCoin(7.81, 390, 1);
+        this.createCoin(7.96, 340, 1);
+        this.createCoin(8.11, 390, 1);
+
+        this.createCoin(9.73, 510, 1);
+        this.createCoin(9.83, 510, 1);
+        this.createCoin(10.48, 510, 1);
+        this.createCoin(10.58, 510, 1);
+        this.createCoin(11.23, 510, 1);
+        this.createCoin(11.33, 510, 1);
+
+        this.createCoin(12.45, 510, 1);
+        this.createCoin(12.56, 460, 1);
+        this.createCoin(12.70, 410, 1);
+        this.createCoin(12.84, 460, 1);
+        this.createCoin(12.95, 510, 1);
+
+        this.createCoin(13.80, 510, 1);
+        this.createCoin(13.91, 460, 1);
+        this.createCoin(14.05, 410, 1);
+        this.createCoin(14.19, 460, 1);
+        this.createCoin(14.30, 510, 1);
+
+        this.createCoin(15.63, 500, 1);
+        this.createCoin(15.83, 400, 1);
+        this.createCoin(16.39, 375, 1);
+        this.createCoin(16.59, 275, 1);
+        this.createCoin(17.10, 300, 1);
+        this.createCoin(17.30, 200, 1);
+        this.createCoin(17.85, 200, 1);
+        this.createCoin(18.05, 100, 1);
+        this.createCoin(18.62, 120, 1);
+        this.createCoin(18.82, 20, 1);
+
+        this.createCoin(20.048, 100, 2);
+        this.createCoin(21.045, 200, 2);
+        this.createCoin(22.061, 300, 2);
+
+        this.createCoin(23.282, 370, 1);
+
+        this.createCoin(24.51, 500, 1);
+        this.createCoin(25, 500, 1);
+        this.createCoin(25.505, 500, 1);
+        this.createCoin(25.997, 500, 1);
+        this.createCoin(26.565, 500, 1);
+
+        
     }
 };
