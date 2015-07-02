@@ -6,7 +6,7 @@ var Level1 = {
         this.createSpike(2, 600, 2);
         this.createSpike(4, 600, 4);
         this.createSpike(6, 600, 6);
-        this.createSpike(8, 600, 8);
+        this.createSpike(8.03, 600, 8);
         // 10
         //this.createFloor(10, 1);
         this.createFloor(11, 12);
@@ -40,10 +40,17 @@ var Level1 = {
 
         // Coins
         this.createCoin(2.03, 500, 1);
-        this.createCoin(4.10, 450, 1);
-        this.createCoin(6.17, 450, 1);
-        this.createCoin(8.15, 470, 1);
-        this.createCoin(8.32, 430, 1);
+        this.createCoin(4.06, 400, 2);
+
+        this.createCoin(6.03, 480, 2);
+        this.createCoin(6.18, 400, 2);
+
+        this.createCoin(8.00, 500, 1);
+        this.createCoin(8.125, 430, 1);
+        this.createCoin(8.25, 400, 1);
+        this.createCoin(8.385, 430, 1);
+        this.createCoin(8.50, 500, 1);
+
         this.createCoin(10.10, 640, 1);
         this.createCoin(10.6, 640, 1);
         this.createCoin(12.35, 400, 1);
