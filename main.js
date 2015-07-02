@@ -93,20 +93,21 @@ Main.prototype = {
         this.coins.enableBody = true;
 
         // Initialize Scoreboard
-        // this.scoreText = game.add.text(1165, 16, 'Score: 0', {
-        //     fontSize: '32px',
-        //     fill: '#000'
-        // });
+        this.scoreText = game.add.text(50, 16, 'Score: 0', {
+            font: 'Aldrich',
+            fontSize: '32px',
+            fill: '#000'
+        });
 
         if(localStorage.getItem(stageSelect) !== null) {
             this.bestScore = localStorage.getItem(stageSelect);
         }
-        this.bestScoreText = game.add.text(1165, 60, 'Best: ' + this.bestScore, {
+        this.bestScoreText = game.add.text(50, 60, 'Best: ' + this.bestScore, {
             font: 'Aldrich',
             fontSize: '20px',
             fill: '#000'
         });
-        this.lastScoreText = game.add.text(1165, 84, 'Last: ' + this.lastScore, {
+        this.lastScoreText = game.add.text(50, 84, 'Last: ' + this.lastScore, {
             font: 'Aldrich',
             fontSize: '20px',
             fill: '#000'
@@ -117,33 +118,31 @@ Main.prototype = {
         this.lastScoreText.fixedToCamera = true;
 
         // Initialize Timer
-        this.timerText = game.add.text(1165, 16, 'Time: 0', {
-            font: 'Aldrich',
-            fontSize: '32px',
-            fill: '#000'
-        });
-
-
-        this.timerText.fixedToCamera = true;
+        // this.timerText = game.add.text(1165, 16, 'Time: 0', {
+        //     font: 'Aldrich',
+        //     fontSize: '32px',
+        //     fill: '#000'
+        // });
+        // this.timerText.fixedToCamera = true;
 
         if (DEBUG_MODE) {
             this.player.body.velocity.x = 0;
 
-            game.add.text(50, 10, 'DEBUG MODE').fixedToCamera = true;
+            game.add.text(50, 130, 'DEBUG MODE').fixedToCamera = true;
 
-            this.xText = game.add.text(50, 50, 'X Secs: ', {
+            this.xText = game.add.text(50, 160, 'X Secs: ', {
                 fontSize: '20px',
                 fill: '#000'
             });
-            this.yText = game.add.text(50, 70, 'Y: 0' + this.yPos, {
+            this.yText = game.add.text(50, 180, 'Y: 0' + this.yPos, {
                 fontSize: '20px',
                 fill: '#000'
             });
-            this.qtyText = game.add.text(50, 90, 'Qty: 0' + this.quantity, {
+            this.qtyText = game.add.text(50, 200, 'Qty: 0' + this.quantity, {
                 fontSize: '20px',
                 fill: '#000'
             });
-            this.blockText = game.add.text(50, 110, 'Type: ' + this.blockType, {
+            this.blockText = game.add.text(50, 220, 'Type: ' + this.blockType, {
                 fontSize: '20px',
                 fill: '#000'
             });
@@ -178,9 +177,6 @@ Main.prototype = {
                 break;
             case 2:
                 Level2.start.call(this);
-                break;
-            case 3:
-                // Level3.start.call(this);
                 break;
             default:
                 EndlessLevel.start.call(this);
@@ -277,6 +273,7 @@ Main.prototype = {
         // if (firstSpike && firstSpike.position.x < game.camera.x + 150) {
         //     spikes.remove(firstSpike, false /* destroy */ , true /* silent */ );
         // }
+
     },
 
     onMouseOrTouch: function() {
@@ -319,23 +316,24 @@ Main.prototype = {
             ++this.jumpCount;
             this.player.body.velocity.y = -1000;
         }
-        if (this.jumpCount === 2) {
-            game.add.tween(this.player).to({
-                angle: 360
-            }, 400, Phaser.Easing.Linear.None, true);
-        }
+        // if (this.jumpCount === 2) {
+        //     game.add.tween(this.player).to({
+        //         angle: 360
+        //     }, 400, Phaser.Easing.Linear.None, true);
+        //     ++this.jumpCount;
+        // }
     },
 
     resetJump: function() {
 
-        if (this.jumpCount > 0) {
-            this.jumpCount = 0;
-        }
+       if (this.player.body.touching.down) {
+           this.jumpCount = 0;            
+       }
     },
 
     die: function() {
         console.log('Player has died');
-        this.lastScore = this.secondsElapsed;
+        this.lastScore = this.score;
         if (this.lastScore > this.bestScore) {
             localStorage.setItem(stageSelect, this.lastScore);
         }
@@ -354,7 +352,7 @@ Main.prototype = {
         this.coinSound.play();
 
         // Add and update the score
-        this.score += 1;
+        this.score += 10;
         this.scoreText.text = 'Score: ' + this.score;
     },
 
@@ -462,8 +460,9 @@ Main.prototype = {
     },
 
     updateTimer: function() {
+        this.score += 100;
         this.secondsElapsed++;
-        this.timerText.text = 'Time: ' + this.secondsElapsed;
+        this.scoreText.text = 'Score: ' + this.score;
     },
 
     debugToggle: function() {
