@@ -1,42 +1,44 @@
-var stageSelect = 1;
-var BACKGROUND_COLOR = '#87CEEB'
-
 var Title = function(game) {
     console.log('Title State Loaded');
+
+    this.BACKGROUND_COLOR = '#87CEEB';
 };
 
 
 Title.prototype = {
     create: function() {
-        this.game.stage.backgroundColor = BACKGROUND_COLOR;
+
+        game.world.setBounds(0, 0, 1344, 750);
+
+        this.game.stage.backgroundColor = this.BACKGROUND_COLOR;
 
         // Add title image
-        this.title = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'title');
-        this.title.anchor.set(0.5);
+        var title = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'title');
+        title.anchor.set(0.5);
 
         // Add animating cube
-        this.cube = this.game.add.sprite(this.game.world.centerX - 63, this.game.world.centerY - 55, 'ninja');
-        this.cube.anchor.set(0.5);
+        var cube = this.game.add.sprite(this.game.world.centerX - 63, this.game.world.centerY - 55, 'ninja');
+        cube.anchor.set(0.5);
 
         // Add tween animation to the cube
-        this.tween = this.game.add.tween(this.cube)
-        .to({ y: 180}, 250, Phaser.Easing.Exponential.Out, false, 1500)
-        .to({ y: 320}, 400, Phaser.Easing.Exponential.In, true).loop().start();
+        this.game.add.tween(cube)
+            .to({y: 180}, 250, Phaser.Easing.Exponential.Out, false, 1500)
+            .to({y: 320}, 400, Phaser.Easing.Exponential.In, true).loop().start();
 
         // Add button to start normal levels game
-        this.stageSelectButton = this.game.add.button(this.game.world.centerX - 200, this.game.world.centerY + 200, 'stageSelectButton', this.stageSelect, this);
-        this.stageSelectButton.anchor.set(0.5);
-        this.stageSelectButton.scale.set(0.7, 0.7);
+        var stageSelectButton = this.game.add.button(this.game.world.centerX - 200, this.game.world.centerY + 200, 'stageSelectButton', this.stageSelect, this);
+        stageSelectButton.anchor.set(0.5);
+        stageSelectButton.scale.set(0.7, 0.7);
 
         // Add button to start normal levels game
-        this.button = this.game.add.button(this.game.world.centerX, this.game.world.centerY + 200, 'playButton', this.startNormal, this);
-        this.button.anchor.set(0.5);
-        this.button.scale.set(0.7, 0.7);
+        var playButton = this.game.add.button(this.game.world.centerX, this.game.world.centerY + 200, 'playButton', this.startNormal, this);
+        playButton.anchor.set(0.5);
+        playButton.scale.set(0.7, 0.7);
 
         // REPLACE CODE FOR ENDLESS
-        this.endlessButton = this.game.add.button(this.game.world.centerX + 200, this.game.world.centerY + 200, 'endlessButton', this.startEndless, this);
-        this.endlessButton.anchor.set(0.5);
-        this.endlessButton.scale.set(0.7, 0.7);
+        var endlessButton = this.game.add.button(this.game.world.centerX + 200, this.game.world.centerY + 200, 'endlessButton', this.startEndless, this);
+        endlessButton.anchor.set(0.5);
+        endlessButton.scale.set(0.7, 0.7);
 
         // Has to load invisible font usage so that main can have webfont loaded instantly
         this.preloadWebFont();
@@ -47,7 +49,7 @@ Title.prototype = {
         game.add.text(1, 1, 'Hi', {
             font: 'Aldrich',
             fontSize: '1px',
-            fill: BACKGROUND_COLOR
+            fill: this.BACKGROUND_COLOR
         });
     },
 
@@ -55,15 +57,15 @@ Title.prototype = {
         this.game.state.start('Main');
     },
     startEndless: function() {
-        stageSelect = 0;
+        globals.stage = 0;
         this.game.state.start('Main');
     },
     stageSelect: function() {
-        if (stageSelect === 1) {
-            stageSelect++;
+        if (globals.stage === 1) {
+            globals.stage++;
             console.log('Stage 2 Selected');
-        } else if (stageSelect === 2) {
-            stageSelect--;
+        } else if (globals.stage === 2) {
+            globals.stage--;
             console.log('Stage 1 Selected');
         }
     }
