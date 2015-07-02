@@ -10,21 +10,12 @@ var Level2 = {
         this.createBrick(7.5, 500, 4);
         this.createBrick(8.25,500, 4);
         this.createFloor(9, 6);
-        this.createBrick(9.7, 470, 4);
-        this.createBrick(9.7, 440, 4);
-        this.createBrick(9.7, 410, 4);
-        this.createBrick(9.7, 380, 4);
+        this.createBrick(9.7, 375, 4, 4);
         this.createSpike(9.75, 600, 2);
 
-        this.createBrick(10.45, 470, 4);
-        this.createBrick(10.45, 440, 4);
-        this.createBrick(10.45, 410, 4);
-        this.createBrick(10.45, 380, 4);
+        this.createBrick(10.45, 375, 4, 4);
         this.createSpike(10.5, 600, 2);
-        this.createBrick(11.2, 470, 4);
-        this.createBrick(11.2, 440, 4);
-        this.createBrick(11.2, 410, 4);
-        this.createBrick(11.2, 380, 4);
+        this.createBrick(11.2, 375, 4, 4);
         this.createSpike(11.25, 600, 2);
         this.createSpike(12, 600, 2);
         this.createSpike(12.55, 600, 5);
