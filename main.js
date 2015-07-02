@@ -117,13 +117,12 @@ Main.prototype = {
         this.bestScoreText.fixedToCamera = true;
         this.lastScoreText.fixedToCamera = true;
 
-        // Initialize Timer
-        // this.timerText = game.add.text(1165, 16, 'Time: 0', {
-        //     font: 'Aldrich',
-        //     fontSize: '32px',
-        //     fill: '#000'
-        // });
-        // this.timerText.fixedToCamera = true;
+        // Back button
+        this.backButton = this.game.add.button(1265, 45, 'playButton', this.backToMenu, this);
+        this.backButton.anchor.set(0.5);
+        this.backButton.scale.set(0.45, 0.45);
+        this.backButton.angle = 180;
+        this.backButton.fixedToCamera = true;
 
         if (DEBUG_MODE) {
             this.player.body.velocity.x = 0;
@@ -463,6 +462,10 @@ Main.prototype = {
         this.score += 100;
         this.secondsElapsed++;
         this.scoreText.text = 'Score: ' + this.score;
+    },
+
+    backToMenu: function() {
+        this.game.state.start('Title');
     },
 
     debugToggle: function() {
