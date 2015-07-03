@@ -53,10 +53,10 @@ var Level1 = {
 
         this.createCoin(10.10, 640, 1);
         this.createCoin(10.6, 640, 1);
-        this.createCoin(12.35, 400, 1);
+        this.createCoin(12.35, 375, 1);
         this.createCoin(15.6, 400, 1);
         this.createCoin(15.84, 400, 1);
-        this.createCoin(19.08, 400, 1);
+        this.createCoin(19.07, 375, 1);
         this.createCoin(20.505, 500, 1);
         this.createCoin(21.13, 500, 1);
         this.createCoin(21.81, 500, 1);
