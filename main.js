@@ -1,29 +1,23 @@
-var X_GAMESPEED = 500; // pixels per second
-var ACCELERATION_FACTOR = 10 / X_GAMESPEED;
-var DEBUG_MODE = false; 
-var victoryFlag = false; // Flag to keep track of victory on level
-var endlessMode = false; // Flag to toggle endless mode differences
-var start;
-var end;
-var totalTime = 0;
-var loopCount = 0;
-
 var Main = function(game) {
     console.log('Main State Loaded');
 
+    this.X_GAMESPEED = 500; // Speed of the game in pixels per second
+    this.ACCELERATION_FACTOR = 10 / this.X_GAMESPEED;
+    this.IS_DEBUG_MODE = false;
+
+    this.isVictory = false; // Flag to keep track of victory on level
     this.jumpCount = 0; // Tracks current amount of jumps, for double jumping
-    this.score = 0;
-    this.scoreText = '';
-    this.lastScoreText = ''; // Text display for last score
-    this.bestScoreText = ''; // Text display for best score
-    this.timer = null;
-    this.timerText = ''; // Text display for the timer
+    this.score = 0; // Keeps track of the player's score internally
+    this.scoreText = ''; // Text display element of the score
+    this.isEndlessMode = false; // Flag to toggle endless mode differences
+    this.timer = null; // Stores the phaser timer created to increment the score
     this.blockType = 1; // 1 = brick, 2: spike, 3: coin, 4: floor
     this.quantity = 1; // Quantity for the level editor
     this.secondsElapsed = 0; // Keeps track of the seconds elapsed on a level
     this.lastScore = 0; // Variable that stores the last score for display
     this.bestScore = 0; // Variable that stores / retrieves the best score from localStorage
     this.banner = null; // Variable to store the flag's banner
+
 };
 
 Main.prototype = {
@@ -45,7 +39,7 @@ Main.prototype = {
         game.physics.arcade.enable(this.player);
         this.player.body.gravity.y = 4000;
         this.player.body.collideWorldBounds = false;
-        this.player.body.velocity.x = X_GAMESPEED;
+        this.player.body.velocity.x = this.X_GAMESPEED;
 
         // INPUT
 
@@ -62,7 +56,7 @@ Main.prototype = {
         keyboard.addKey(Phaser.Keyboard.TILDE).onDown.add(this.debugToggle, this);
 
 
-        if (DEBUG_MODE) {
+        if (this.IS_DEBUG_MODE) {
             keyboard.addKey(Phaser.Keyboard.A).onDown.add(this.brickToggle, this);
             keyboard.addKey(Phaser.Keyboard.S).onDown.add(this.spikeToggle, this);
             keyboard.addKey(Phaser.Keyboard.D).onDown.add(this.coinToggle, this);
@@ -99,23 +93,25 @@ Main.prototype = {
             fill: '#000'
         });
 
-        if(localStorage.getItem(stageSelect) !== null) {
-            this.bestScore = localStorage.getItem(stageSelect);
+        if (localStorage.getItem(globals.stage) !== null) {
+            this.bestScore = localStorage.getItem(globals.stage);
         }
-        this.bestScoreText = game.add.text(50, 60, 'Best: ' + this.bestScore, {
+
+        var bestScoreText = game.add.text(50, 60, 'Best: ' + this.bestScore, {
             font: 'Aldrich',
             fontSize: '20px',
             fill: '#000'
         });
-        this.lastScoreText = game.add.text(50, 84, 'Last: ' + this.lastScore, {
+
+        var lastScoreText = game.add.text(50, 84, 'Last: ' + this.lastScore, {
             font: 'Aldrich',
             fontSize: '20px',
             fill: '#000'
         });
 
         this.scoreText.fixedToCamera = true;
-        this.bestScoreText.fixedToCamera = true;
-        this.lastScoreText.fixedToCamera = true;
+        bestScoreText.fixedToCamera = true;
+        lastScoreText.fixedToCamera = true;
 
         // Back button
         this.backButton = this.game.add.button(1265, 45, 'playButton', this.backToMenu, this);
@@ -124,7 +120,7 @@ Main.prototype = {
         this.backButton.angle = 180;
         this.backButton.fixedToCamera = true;
 
-        if (DEBUG_MODE) {
+        if (this.IS_DEBUG_MODE) {
             this.player.body.velocity.x = 0;
 
             game.add.text(50, 130, 'DEBUG MODE').fixedToCamera = true;
@@ -160,15 +156,15 @@ Main.prototype = {
         this.jumpSound = game.add.audio('jump');
         this.jumpSound.volume = 0.5;
 
-        if (!this.music && !DEBUG_MODE) {
+        if (!this.music && !this.IS_DEBUG_MODE) {
             this.music = game.add.audio('music');
             // this.music.loopFull();
         }
 
         // Create the world objects depending on stage selected
-        switch (stageSelect) {
+        switch (globals.stage) {
             case 0:
-                endlessMode = true;
+                this.isEndlessMode = true;
                 EndlessLevel.start.call(this);
                 break;
             case 1:
@@ -182,7 +178,7 @@ Main.prototype = {
                 break;
         }
 
-        victoryFlag = false;
+        this.isVictory = false;
 
         this.platforms.setAll('body.allowGravity', false);
         this.platforms.setAll('body.immovable', true);
@@ -197,11 +193,11 @@ Main.prototype = {
         this.flag.setAll('body.gravity.y', 4000);
         this.flag.setAll('body.moves', false);
 
-        if (endlessMode && !DEBUG_MODE) {
+        if (this.isEndlessMode && !this.IS_DEBUG_MODE) {
             this.player.body.acceleration.x = 10; 
         }
 
-        if (!DEBUG_MODE) {
+        if (!this.IS_DEBUG_MODE) {
             this.timer = this.game.time.create();
             this.timer.loop(1000, this.updateTimer, this);
             this.timer.start();
@@ -220,7 +216,7 @@ Main.prototype = {
         var platforms = this.platforms;
 
         //  In debug, display X, Y, Qty, Type for level editing
-        if (DEBUG_MODE) {
+        if (this.IS_DEBUG_MODE) {
             this.xText.text = 'X Secs : ' + (game.camera.x + game.input.x) / 500;
             this.yText.text = 'Y : ' + game.input.y;
             this.qtyText.text = 'Qty : ' + this.quantity;
@@ -237,11 +233,11 @@ Main.prototype = {
             game.camera.focusOnXY(player.x + 400, player.y);
 
             // If player gets stopped by brick
-            if (playerBody.velocity.x < 500 && !victoryFlag) {
-                if (endlessMode) { // Endless mode, uses current x position to recalculate approx speed
-                    playerBody.velocity.x = X_GAMESPEED + (playerBody.x * ACCELERATION_FACTOR);
+            if (playerBody.velocity.x < 500 && !this.isVictory) {
+                if (this.isEndlessMode) { // Endless mode, uses current x position to recalculate approx speed
+                    playerBody.velocity.x = this.X_GAMESPEED + (playerBody.x * ACCELERATION_FACTOR);
                 } else { // Normal mode sets player speed back to default.
-                    playerBody.velocity.x = X_GAMESPEED;
+                    playerBody.velocity.x = this.X_GAMESPEED;
                 }
             } else if (player.y > game.world.height + 500) {
                 this.die();
@@ -277,7 +273,7 @@ Main.prototype = {
 
     onMouseOrTouch: function() {
 
-        if (DEBUG_MODE) {
+        if (this.IS_DEBUG_MODE) {
 
             var itemX = (game.camera.x + game.input.x) / 500;
             var itemY = game.input.y;
@@ -315,12 +311,12 @@ Main.prototype = {
             ++this.jumpCount;
             this.player.body.velocity.y = -1000;
         }
-        // if (this.jumpCount === 2) {
-        //     game.add.tween(this.player).to({
-        //         angle: 360
-        //     }, 400, Phaser.Easing.Linear.None, true);
-        //     ++this.jumpCount;
-        // }
+        if (this.jumpCount === 2) {
+            game.add.tween(this.player).to({
+                angle: 360
+            }, 400, Phaser.Easing.Linear.None, true);
+            ++this.jumpCount;
+        }
     },
 
     resetJump: function() {
@@ -334,7 +330,7 @@ Main.prototype = {
         console.log('Player has died');
         this.lastScore = this.score;
         if (this.lastScore > this.bestScore) {
-            localStorage.setItem(stageSelect, this.lastScore);
+            localStorage.setItem(globals.stage, this.lastScore);
         }
         this.deathSound.play();
         this.resetGame();
@@ -355,17 +351,20 @@ Main.prototype = {
         this.scoreText.text = 'Score: ' + this.score;
     },
 
-    createBrick: function(seconds, y, length) {
-        var x = seconds * X_GAMESPEED;
+    createBrick: function(seconds, y, length, height) {
+        var x = seconds * this.X_GAMESPEED;
 
         if (length === undefined) {
             length = 1;
         }
-        this.platforms.create(x, y, 'brick').scale.setTo(length, 1);
+        if (height === undefined) {
+            height = 1;
+        }
+        this.platforms.create(x, y, 'brick').scale.setTo(length, height);
     },
 
     createFloor: function(seconds, length) {
-        var x = seconds * X_GAMESPEED;
+        var x = seconds * this.X_GAMESPEED;
 
         if (length === undefined) {
             length = 1;
@@ -378,7 +377,7 @@ Main.prototype = {
     },
 
     createSpike: function(seconds, y, num) {
-        var x = seconds * X_GAMESPEED;
+        var x = seconds * this.X_GAMESPEED;
 
         if (num === undefined) {
             num = 1;
@@ -391,7 +390,7 @@ Main.prototype = {
     },
 
     createCoin: function(seconds, y, num) {
-        var x = seconds * X_GAMESPEED;
+        var x = seconds * this.X_GAMESPEED;
 
         if (num === undefined) {
             num = 1;
@@ -403,7 +402,7 @@ Main.prototype = {
     },
 
     placeFlag: function(seconds) {
-        var x = seconds * X_GAMESPEED;
+        var x = seconds * this.X_GAMESPEED;
         this.flag.create(x, 256, 'flagpole');
 
         this.banner = game.add.sprite(x + 3, 270, 'banner');
@@ -422,39 +421,40 @@ Main.prototype = {
         };
 
         var victoryJump = function() {
-            this.victoryText = null;
-            this.nextLevelButton = null;
+            var victoryText;
+            var nextLevelButton;
+            var cX = game.width/2;
+            var cY = this.game.world.centerY;
 
             // Congratulatory text
-            this.victoryText = game.add.text(game.width/2, this.game.world.centerY - 100, 'Level Complete!', {
+            victoryText = game.add.text(cX, cY - 100, 'Level Complete!', {
                 font: 'Aldrich',
                 fontSize: '64px',
                 fill: '#333'
             });
-            this.victoryText.fixedToCamera = true;
-            this.victoryText.anchor.setTo(0.5);
+            victoryText.fixedToCamera = true;
+            victoryText.anchor.setTo(0.5);
 
             // Sprite for the next level button
-            stageSelect++;
-            this.nextLevelButton = this.game.add.button(game.width/2, this.game.world.centerY + 150, 'playButton', function(){this.game.state.start('Main');} , this);
-            this.nextLevelButton.fixedToCamera = true;
-            this.nextLevelButton.anchor.set(0.5);
-            this.nextLevelButton.scale.set(0.7);
+            globals.stage++;
+            nextLevelButton = this.game.add.button(cX, cY + 150, 'playButton', game.state.states.Main.resetGame , this);
+            nextLevelButton.fixedToCamera = true;
+            nextLevelButton.anchor.set(0.5);
+            nextLevelButton.scale.set(0.7);
 
             this.jump();
             game.time.events.add(Phaser.Timer.SECOND, this.jump, this);
 
         };
 
-        console.log('Victory!');
-        victoryFlag = true;
+        this.isVictory = true;
 
         this.player.body.velocity.x = 0;
         this.timer.stop();
 
-        this.bannerTween = this.game.add.tween(this.banner)
+        var bannerTween = this.game.add.tween(this.banner)
             .to({y: 575}, 1500, Phaser.Easing.Linear.In).start();
-        this.bannerTween.onComplete.add(playerWalkTween, this);
+        bannerTween.onComplete.add(playerWalkTween, this);
 
     },
 
@@ -469,12 +469,12 @@ Main.prototype = {
     },
 
     debugToggle: function() {
-        if (DEBUG_MODE) {
+        if (this.IS_DEBUG_MODE) {
             console.log('Debug Mode : OFF');
-            DEBUG_MODE = false;
+            this.IS_DEBUG_MODE = false;
         } else {
             console.log('Debug Mode : ON');
-            DEBUG_MODE = true;
+            this.IS_DEBUG_MODE = true;
         }
 
         this.game.state.start('Main');
@@ -494,10 +494,6 @@ Main.prototype = {
 
     floorToggle: function() {
         this.blockType = 4;
-    },
-
-    placeItem: function() {
-        console.log('Spacebar');
     },
 
     oneSwitch: function() {
@@ -526,5 +522,5 @@ Main.prototype = {
     },
     nineSwitch: function() {
         this.quantity = 9;
-    },
+    }
 };
