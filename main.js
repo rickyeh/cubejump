@@ -91,6 +91,7 @@ Main.prototype = {
             fontSize: '32px',
             fill: '#000'
         });
+        this.score = 0;
 
         if (localStorage.getItem(globals.stage) !== null) {
             this.bestScore = localStorage.getItem(globals.stage);
