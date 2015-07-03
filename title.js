@@ -7,6 +7,10 @@ var Title = function(game) {
 
 Title.prototype = {
     create: function() {
+        this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+        // this.game.scale.pageAlignHorizontally = true;
+        this.game.scale.pageAlignVertically = true;
+        this.game.scale.refresh();
 
         game.world.setBounds(0, 0, 1344, 750);
 
