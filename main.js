@@ -61,7 +61,6 @@ Main.prototype = {
             keyboard.addKey(Phaser.Keyboard.S).onDown.add(this.spikeToggle, this);
             keyboard.addKey(Phaser.Keyboard.D).onDown.add(this.coinToggle, this);
             keyboard.addKey(Phaser.Keyboard.F).onDown.add(this.floorToggle, this);
-            keyboard.addKey(Phaser.Keyboard.SPACEBAR).onDown.add(this.placeItem, this);
             keyboard.addKey(Phaser.Keyboard.ONE).onDown.add(this.oneSwitch, this);
             keyboard.addKey(Phaser.Keyboard.TWO).onDown.add(this.twoSwitch, this);
             keyboard.addKey(Phaser.Keyboard.THREE).onDown.add(this.threeSwitch, this);
@@ -114,10 +113,9 @@ Main.prototype = {
         lastScoreText.fixedToCamera = true;
 
         // Back button
-        this.backButton = this.game.add.button(1265, 45, 'playButton', this.backToMenu, this);
+        this.backButton = this.game.add.button(1265, 50, 'xButton', this.backToMenu, this);
         this.backButton.anchor.set(0.5);
-        this.backButton.scale.set(0.45, 0.45);
-        this.backButton.angle = 180;
+        this.backButton.scale.set(0.9, 0.9);
         this.backButton.fixedToCamera = true;
 
         if (this.IS_DEBUG_MODE) {
@@ -158,7 +156,7 @@ Main.prototype = {
 
         if (!this.music && !this.IS_DEBUG_MODE) {
             this.music = game.add.audio('music');
-            // this.music.loopFull();
+            this.music.loopFull();
         }
 
         // Create the world objects depending on stage selected
@@ -235,7 +233,7 @@ Main.prototype = {
             // If player gets stopped by brick
             if (playerBody.velocity.x < 500 && !this.isVictory) {
                 if (this.isEndlessMode) { // Endless mode, uses current x position to recalculate approx speed
-                    playerBody.velocity.x = this.X_GAMESPEED + (playerBody.x * ACCELERATION_FACTOR);
+                    playerBody.velocity.x = this.X_GAMESPEED + (playerBody.x * this.ACCELERATION_FACTOR);
                 } else { // Normal mode sets player speed back to default.
                     playerBody.velocity.x = this.X_GAMESPEED;
                 }
@@ -304,18 +302,21 @@ Main.prototype = {
 
     jump: function() {
 
-        if (this.jumpCount === 0) {
-            this.jumpSound.play(); // play sound on first jump
-        }
-        if (this.jumpCount < 2) {
-            ++this.jumpCount;
-            this.player.body.velocity.y = -1000;
-        }
-        if (this.jumpCount === 2) {
-            game.add.tween(this.player).to({
-                angle: 360
-            }, 400, Phaser.Easing.Linear.None, true);
-            ++this.jumpCount;
+        switch (this.jumpCount) {
+            case 0:
+                this.jumpSound.play();
+                this.player.body.velocity.y = -1000;
+                this.jumpCount++;
+                break;
+            case 1:
+                this.player.body.velocity.y = -1000;
+                this.jumpCount++;
+                game.add.tween(this.player).to({
+                    angle: 360
+                }, 400, Phaser.Easing.Linear.None, true);
+                break;
+            default:
+                break;
         }
     },
 
