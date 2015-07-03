@@ -9,6 +9,7 @@ var globals = {
 
     game.state.add("Preload", Preload);
     game.state.add("Title", Title);
+    game.state.add("LevelSelect", LevelSelect);
     game.state.add("Main", Main);
     game.state.start("Preload");
 })();

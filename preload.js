@@ -13,6 +13,7 @@ Preload.prototype = {
         game.load.image('grass', 'assets/grass.png');
         game.load.image('title', 'assets/title.png');
         game.load.image('stageSelectButton', 'assets/stageSelect.png');
+        game.load.image('stageBanner', 'assets/stageBanner.png');
         game.load.image('playButton', 'assets/playButton.png');
         game.load.image('endlessButton', 'assets/endlessButton.png');
         game.load.image('flagpole', 'assets/flagpole.png');

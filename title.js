@@ -26,7 +26,7 @@ Title.prototype = {
             .to({y: 320}, 400, Phaser.Easing.Exponential.In, true).loop().start();
 
         // Add button to start normal levels game
-        var stageSelectButton = this.game.add.button(this.game.world.centerX - 200, this.game.world.centerY + 200, 'stageSelectButton', this.stageSelect, this);
+        var stageSelectButton = this.game.add.button(this.game.world.centerX - 200, this.game.world.centerY + 200, 'stageSelectButton', this.startLevelSelect, this);
         stageSelectButton.anchor.set(0.5);
         stageSelectButton.scale.set(0.7, 0.7);
 
@@ -60,13 +60,7 @@ Title.prototype = {
         globals.stage = 0;
         this.game.state.start('Main');
     },
-    stageSelect: function() {
-        if (globals.stage === 1) {
-            globals.stage++;
-            console.log('Stage 2 Selected');
-        } else if (globals.stage === 2) {
-            globals.stage--;
-            console.log('Stage 1 Selected');
-        }
+    startLevelSelect: function() {
+        this.game.state.start('LevelSelect');
     }
 };
