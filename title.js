@@ -69,6 +69,7 @@ Title.prototype = {
     },
 
     startNormal: function() {
+        globals.stage = 1;
         this.game.state.start('Main');
     },
 
