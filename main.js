@@ -162,6 +162,8 @@ Main.prototype = {
             this.music.loopFull();
         }
 
+        this.isEndlessMode = false; // Reset endless mode flag
+
         // Create the world objects depending on stage selected
         switch (globals.stage) {
             case 0:
@@ -175,7 +177,7 @@ Main.prototype = {
                 Level2.start.call(this);
                 break;
             default:
-                this.backToMenu;
+                this.backToMenu();
                 break;
         }
 
@@ -465,6 +467,8 @@ Main.prototype = {
     // Function to go back to Title state
     backToMenu: function() {
         this.game.state.start('Title');
+        this.music.stop();
+        this.music = null;
     },
 
     // Function that toggles the debug mode.  Executed with ~ keypress
