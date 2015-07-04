@@ -1,3 +1,4 @@
+// This state is used for the level select screen. It is called when button is pressed from title screen.
 var LevelSelect = function(game) {
     console.log('Level Select loaded');
 };
@@ -8,6 +9,7 @@ LevelSelect.prototype = {
         var cX = this.game.world.centerX;
         var cY = this.game.world.centerY;
 
+        // Button for stage One
         var stageOneButton = this.game.add.button(cX, cY - 225, 'stageBanner', this.startLevelOne, this);
         stageOneButton.anchor.set(0.5);
 
@@ -19,6 +21,7 @@ LevelSelect.prototype = {
         stageOneText.anchor.set(0.5);
         stageOneButton.addChild(stageOneText);
 
+        // Button for stage Two
         var stageTwoButton = this.game.add.button(cX, cY, 'stageBanner', this.startLevelTwo, this);
         stageTwoButton.anchor.set(0.5);
 
@@ -30,6 +33,7 @@ LevelSelect.prototype = {
         stageTwoText.anchor.set(0.5);
         stageTwoButton.addChild(stageTwoText);
 
+        // Button to return to Title screen
         var backButton = this.game.add.button(cX, cY + 225, 'stageBanner', this.backToMenu, this);
         backButton.anchor.set(0.5);
 

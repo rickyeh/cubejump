@@ -1,7 +1,7 @@
 var game = null; // Make it global so that it can be accessed by other JS files.
 
 var globals = {
-    stage: 1
+    stage: 1 // Variable to keep track of what stage is to be loaded
 };
 
 (function() {
