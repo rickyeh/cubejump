@@ -2,8 +2,8 @@ var Main = function(game) {
     console.log('Main State Loaded');
 
     this.X_GAMESPEED = 500; // Speed of the game in pixels per second
-    this.ACCELERATION_FACTOR = 10 / this.X_GAMESPEED;
-    this.IS_DEBUG_MODE = false;
+    this.ACCELERATION_FACTOR = 10 / this.X_GAMESPEED;  // Used to calculate acceleration while in endless mode
+    this.IS_DEBUG_MODE = false; // Used to track whether game is in debug mode or not
 
     this.isVictory = false; // Flag to keep track of victory on level
     this.jumpCount = 0; // Tracks current amount of jumps, for double jumping
@@ -44,10 +44,9 @@ Main.prototype = {
         // INPUT
 
         // Added mouse / touch functionality for jumping
-        var keyboard = game.input.keyboard;  // local variable for convenience
+        var keyboard = game.input.keyboard; 
 
-        this.input.onDown.add(this.onMouseOrTouch, this);
-
+        this.input.onDown.add(this.onMouseOrTouch, this); // Click and touch handler
 
         // Add scroll buttons for level editor
         this.cursors = keyboard.createCursorKeys();
@@ -55,8 +54,10 @@ Main.prototype = {
         keyboard.addKey(Phaser.Keyboard.UP).onDown.add(this.jump, this);
         keyboard.addKey(Phaser.Keyboard.TILDE).onDown.add(this.debugToggle, this);
 
-
+        // Add various functionality for debugging purposes
         if (this.IS_DEBUG_MODE) {
+            this.player.body.velocity.x = 0;
+
             keyboard.addKey(Phaser.Keyboard.A).onDown.add(this.brickToggle, this);
             keyboard.addKey(Phaser.Keyboard.S).onDown.add(this.spikeToggle, this);
             keyboard.addKey(Phaser.Keyboard.D).onDown.add(this.coinToggle, this);
@@ -70,57 +71,6 @@ Main.prototype = {
             keyboard.addKey(Phaser.Keyboard.SEVEN).onDown.add(this.sevenSwitch, this);
             keyboard.addKey(Phaser.Keyboard.EIGHT).onDown.add(this.eightSwitch, this);
             keyboard.addKey(Phaser.Keyboard.NINE).onDown.add(this.nineSwitch, this);
-        }
-
-
-        // Initialize Physics for obstacles
-        this.platforms = this.add.physicsGroup();
-        this.spikes = this.add.physicsGroup();
-        this.flag = this.add.physicsGroup();
-
-        // Initialize floor
-        this.floor = game.add.group();
-        this.floor.enableBody = true;
-
-        this.coins = game.add.group();
-        this.coins.enableBody = true;
-
-        // Initialize Scoreboard
-        this.scoreText = game.add.text(50, 16, 'Score: 0', {
-            font: 'Aldrich',
-            fontSize: '32px',
-            fill: '#000'
-        });
-        this.score = 0;
-
-        if (localStorage.getItem(globals.stage) !== null) {
-            this.bestScore = localStorage.getItem(globals.stage);
-        }
-
-        var bestScoreText = game.add.text(50, 60, 'Best: ' + this.bestScore, {
-            font: 'Aldrich',
-            fontSize: '20px',
-            fill: '#000'
-        });
-
-        var lastScoreText = game.add.text(50, 84, 'Last: ' + this.lastScore, {
-            font: 'Aldrich',
-            fontSize: '20px',
-            fill: '#000'
-        });
-
-        this.scoreText.fixedToCamera = true;
-        bestScoreText.fixedToCamera = true;
-        lastScoreText.fixedToCamera = true;
-
-        // Back button
-        this.backButton = this.game.add.button(1265, 50, 'xButton', this.backToMenu, this);
-        this.backButton.anchor.set(0.5);
-        this.backButton.scale.set(0.9, 0.9);
-        this.backButton.fixedToCamera = true;
-
-        if (this.IS_DEBUG_MODE) {
-            this.player.body.velocity.x = 0;
 
             game.add.text(50, 130, 'DEBUG MODE').fixedToCamera = true;
 
@@ -145,8 +95,60 @@ Main.prototype = {
             this.yText.fixedToCamera = true;
             this.qtyText.fixedToCamera = true;
             this.blockText.fixedToCamera = true;
+        } else {
+            //  Initialize timer for scoring if not debug mode
+            this.timer = this.game.time.create();
+            this.timer.loop(1000, this.updateTimer, this);
+            this.timer.start();
         }
 
+
+        // Initialize Physics for obstacles
+        this.platforms = this.add.physicsGroup();
+        this.spikes = this.add.physicsGroup();
+        this.flag = this.add.physicsGroup();
+
+        // Initialize floor
+        this.floor = game.add.group();
+        this.floor.enableBody = true;
+
+        this.coins = game.add.group();
+        this.coins.enableBody = true;
+
+        // Initialize Scoreboard and on screen text
+        this.scoreText = game.add.text(50, 16, 'Score: 0', {
+            font: 'Aldrich',
+            fontSize: '32px',
+            fill: '#000'
+        });
+        this.score = 0;
+
+        // Get local storage to set the best score
+        if (localStorage.getItem(globals.stage) !== null) {
+            this.bestScore = localStorage.getItem(globals.stage);
+        }
+
+        var bestScoreText = game.add.text(50, 60, 'Best: ' + this.bestScore, {
+            font: 'Aldrich',
+            fontSize: '20px',
+            fill: '#000'
+        });
+
+        var lastScoreText = game.add.text(50, 84, 'Last: ' + this.lastScore, {
+            font: 'Aldrich',
+            fontSize: '20px',
+            fill: '#000'
+        });
+
+        this.scoreText.fixedToCamera = true;
+        bestScoreText.fixedToCamera = true;
+        lastScoreText.fixedToCamera = true;
+
+        // Display the back button
+        this.backButton = this.game.add.button(1265, 50, 'xButton', this.backToMenu, this);
+        this.backButton.anchor.set(0.5);
+        this.backButton.scale.set(0.9, 0.9);
+        this.backButton.fixedToCamera = true;
 
         // Iniitialize audio
         this.coinSound = game.add.audio('coin');
@@ -173,7 +175,7 @@ Main.prototype = {
                 Level2.start.call(this);
                 break;
             default:
-                EndlessLevel.start.call(this);
+                this.backToMenu;
                 break;
         }
 
@@ -185,23 +187,19 @@ Main.prototype = {
         this.floor.setAll('body.allowGravity', false);
         this.floor.setAll('body.immovable', true);
         this.floor.setAll('body.friction.x', 0);
-        this.spikes.setAll('body.allowGravity', true);
-        this.spikes.setAll('body.immovable', false);
-        this.spikes.setAll('body.gravity.y', 4000);
         this.flag.setAll('body.immovable', true);
         this.flag.setAll('body.gravity.y', 4000);
         this.flag.setAll('body.moves', false);
+        if (this.isEndlessMode) {
+            this.spikes.setAll('body.allowGravity', true);
+            this.spikes.setAll('body.immovable', false);
+            this.spikes.setAll('body.gravity.y', 4000);
+        }
 
+        // Set acceleration for player if endless mode
         if (this.isEndlessMode && !this.IS_DEBUG_MODE) {
             this.player.body.acceleration.x = 10; 
         }
-
-        if (!this.IS_DEBUG_MODE) {
-            this.timer = this.game.time.create();
-            this.timer.loop(1000, this.updateTimer, this);
-            this.timer.start();
-        }
-
     },
 
     update: function() {
@@ -250,28 +248,21 @@ Main.prototype = {
         arcade.collide(player, spikes, this.die, null, this);
         arcade.overlap(player, coins, this.collectCoin, null, this);
 
-        arcade.collide(spikes, floor);
-        arcade.collide(spikes, platforms);
+        // In endess mode, make additional physics collisions
+        if (this.isEndlessMode) {
+            arcade.collide(spikes, floor);
+            arcade.collide(spikes, platforms);
 
-        // Collision for coins
-        arcade.collide(coins, platforms);
-        arcade.collide(coins, floor);
-
-        // Debugging FPS display
-        //console.log(game.time.fps);
-
-        //console.log(game.camera.x + ' vs ' + spikes.children[0].position.x);
-
-        // var firstSpike = spikes.children[0];
-
-        // if (firstSpike && firstSpike.position.x < game.camera.x + 150) {
-        //     spikes.remove(firstSpike, false /* destroy */ , true /* silent */ );
-        // }
-
+            // Collision for coins
+            // arcade.collide(coins, platforms);
+            // arcade.collide(coins, floor);
+        }
     },
 
+    // Function called when player clicks screen or presses UP key
     onMouseOrTouch: function() {
 
+        // In debug mode, it will place an object.  In regular, it will jump the player
         if (this.IS_DEBUG_MODE) {
 
             var itemX = (game.camera.x + game.input.x) / 500;
@@ -301,6 +292,7 @@ Main.prototype = {
 
     },
 
+    // Function that handles the jump logic
     jump: function() {
 
         switch (this.jumpCount) {
@@ -321,13 +313,14 @@ Main.prototype = {
         }
     },
 
+    // Function called when player touches floor, resetting jump counter to 0
     resetJump: function() {
-
        if (this.player.body.touching.down) {
            this.jumpCount = 0;            
        }
     },
 
+    // Death function upon player impact with spike or through floor
     die: function() {
         console.log('Player has died');
         this.lastScore = this.score;
@@ -338,6 +331,7 @@ Main.prototype = {
         this.resetGame();
     },
 
+    // Function to reset the game.  Usually called upon death.
     resetGame: function() {
         this.score = 0;
         this.secondsElapsed = 0;
@@ -412,6 +406,7 @@ Main.prototype = {
 
     },
 
+    // Function called when player touches flag at end of level
     victory: function() {
 
         var playerWalkTween = function() {
@@ -454,22 +449,25 @@ Main.prototype = {
         this.player.body.velocity.x = 0;
         this.timer.stop();
 
+        // Tween that handles the flag dropping down
         var bannerTween = this.game.add.tween(this.banner)
             .to({y: 575}, 1500, Phaser.Easing.Linear.In).start();
         bannerTween.onComplete.add(playerWalkTween, this);
-
     },
 
+    // Function that is called every second to increase the score and total seconds elapsed
     updateTimer: function() {
         this.score += 100;
         this.secondsElapsed++;
         this.scoreText.text = 'Score: ' + this.score;
     },
 
+    // Function to go back to Title state
     backToMenu: function() {
         this.game.state.start('Title');
     },
 
+    // Function that toggles the debug mode.  Executed with ~ keypress
     debugToggle: function() {
         if (this.IS_DEBUG_MODE) {
             console.log('Debug Mode : OFF');
@@ -482,6 +480,7 @@ Main.prototype = {
         this.game.state.start('Main');
     },
 
+    // DEBUG FUNCTIONS - Helper functions for level design
     brickToggle: function() {
         this.blockType = 1;
     },
@@ -501,27 +500,35 @@ Main.prototype = {
     oneSwitch: function() {
         this.quantity = 1;
     },
+
     twoSwitch: function() {
         this.quantity = 2;
     },
+
     threeSwitch: function() {
         this.quantity = 3;
     },
+
     fourSwitch: function() {
         this.quantity = 4;
     },
+
     fiveSwitch: function() {
         this.quantity = 5;
     },
+
     sixSwitch: function() {
         this.quantity = 6;
     },
+
     sevenSwitch: function() {
         this.quantity = 7;
     },
+
     eightSwitch: function() {
         this.quantity = 8;
     },
+    
     nineSwitch: function() {
         this.quantity = 9;
     }
