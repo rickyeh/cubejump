@@ -4,7 +4,7 @@ Welcome to Cubejump!
 
 This is a small game I made to test out the Phaser library.
 
-It is similar to many other sidescrolling jumper games like Geometry Dash and the Impoisslbe Game.
+It is similar to many other sidescrolling jumper games like Geometry Dash and The Impossible Game.
 
 Either press play, or select endless mode.
 
